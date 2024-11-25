@@ -1,6 +1,6 @@
 package com.sd.stockmanagementsystem.domain.model;
 
-import com.sd.stockmanagementsystem.domain.enumeration.ModelEnumeration.unitType;
+import com.sd.stockmanagementsystem.domain.enumeration.ProductEnumeration.UnitType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,17 +23,12 @@ public class Product {
     @Column(name = "product_name")
     private String name;
 
-/*
-    @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
-*/
+    @Column(name = "product_unitType")
+    @Enumerated(EnumType.STRING)
+    private UnitType unitType;
 
     @Column(name = "product_quantity")
     private double quantity;
-
-    @Column(name = "product_unitType")
-    private unitType unitType;
 
     @Column(name = "product_price")
     private double price;

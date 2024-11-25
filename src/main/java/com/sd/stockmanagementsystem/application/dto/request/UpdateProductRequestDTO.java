@@ -1,7 +1,7 @@
 package com.sd.stockmanagementsystem.application.dto.request;
 
 import com.sd.stockmanagementsystem.application.dto.valid.ValidQuantityOfUnitType;
-import com.sd.stockmanagementsystem.domain.enumeration.ModelEnumeration;
+import com.sd.stockmanagementsystem.domain.enumeration.ProductEnumeration;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -25,7 +25,7 @@ public class UpdateProductRequestDTO {
     private String name;
 
     @NotNull(message = "Product unit type can not be null!")
-    private ModelEnumeration.unitType unitType;
+    private ProductEnumeration.UnitType unitType;
 
     @NotNull(message = "Product quantity can not be null!")
     @Positive

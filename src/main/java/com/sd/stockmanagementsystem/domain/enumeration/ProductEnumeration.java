@@ -1,7 +1,7 @@
 package com.sd.stockmanagementsystem.domain.enumeration;
 
-public class ModelEnumeration {
-    public enum unitType {
+public class ProductEnumeration {
+    public enum UnitType {
         KILOGRAMS,
         LITERS,
         COUNT
