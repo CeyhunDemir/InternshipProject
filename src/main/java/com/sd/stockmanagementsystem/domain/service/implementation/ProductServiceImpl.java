@@ -5,7 +5,7 @@ import com.sd.stockmanagementsystem.application.dto.request.DeleteProductRequest
 import com.sd.stockmanagementsystem.application.dto.request.UpdateProductRequestDTO;
 import com.sd.stockmanagementsystem.domain.model.Product;
 import com.sd.stockmanagementsystem.domain.service.IProductService;
-import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.mapper.IProductMapperService;
+import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.mapper.IGeneralMapperService;
 import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -18,7 +18,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class ProductServiceImpl implements IProductService{
     private final ProductRepository productRepository;
-    private final IProductMapperService productMapperService;
+    private final IGeneralMapperService productMapperService;
     @Override
     @Transactional
     public void addProduct(AddProductRequestDTO addProductRequestDto) {
@@ -48,5 +48,17 @@ public class ProductServiceImpl implements IProductService{
         }
         else
             throw new EntityNotFoundException("Product id does not exist!");
+    }
+
+
+    @Override
+    public Product getProductById(long id) {
+        Optional<Product> product = productRepository.findById(id);
+        if (product.isPresent()){
+            return product.get();
+        }
+        else{
+            throw new EntityNotFoundException("Product id does not exist!");
+        }
     }
 }

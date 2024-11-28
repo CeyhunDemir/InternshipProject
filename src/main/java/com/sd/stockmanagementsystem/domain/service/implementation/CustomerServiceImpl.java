@@ -5,7 +5,7 @@ import com.sd.stockmanagementsystem.application.dto.request.DeleteCustomerReques
 import com.sd.stockmanagementsystem.application.dto.request.UpdateCustomerRequestDTO;
 import com.sd.stockmanagementsystem.domain.model.Customer;
 import com.sd.stockmanagementsystem.domain.service.ICustomerService;
-import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.mapper.ICustomerMapperService;
+import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.mapper.IGeneralMapperService;
 import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.repository.CustomerRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -17,7 +17,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class CustomerServiceImpl implements ICustomerService {
-    private final ICustomerMapperService customerMapperService;
+    private final IGeneralMapperService customerMapperService;
     private final CustomerRepository customerRepository;
 
     @Override
@@ -49,5 +49,16 @@ public class CustomerServiceImpl implements ICustomerService {
         }
         else
             throw new EntityNotFoundException("Customer id not found!");
+    }
+
+    @Override
+    public Customer getCustomerById(long id) {
+        Optional<Customer> customer = customerRepository.findById(id);
+        if (customer.isPresent()) {
+            return customer.get();
+        }
+        else{
+            throw new EntityNotFoundException("Customer id not found!");
+        }
     }
 }

@@ -3,7 +3,6 @@ package com.sd.stockmanagementsystem.application.dto.request;
 import com.sd.stockmanagementsystem.application.dto.valid.ValidEnum;
 import com.sd.stockmanagementsystem.application.dto.valid.ValidQuantityOfUnitType;
 import com.sd.stockmanagementsystem.domain.enumeration.ProductEnumeration;
-import com.sd.stockmanagementsystem.domain.enumeration.ProductEnumeration.UnitType;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -19,7 +18,6 @@ public class AddProductRequestDTO {
     private String name;
 
     @NotNull(message = "Product unit type can not be null!")
-    @ValidEnum(enumClass = UnitType.class, message = "No such product quantity type exists.")
     private ProductEnumeration.UnitType unitType;
 
     @NotNull(message = "Product quantity can not be null!")

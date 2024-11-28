@@ -7,6 +7,8 @@ import com.sd.stockmanagementsystem.domain.enumeration.TransactionEnumeration;
 import com.sd.stockmanagementsystem.domain.model.Customer;
 import com.sd.stockmanagementsystem.domain.model.Product;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,19 +23,26 @@ import lombok.NoArgsConstructor;
 @ValidQuantityOfTransaction(message = "This much amount of product does not exist in stocks!!!")
 @ValidQuantityOfProduct(message = "Cant buy/sell COUNT unit type products with decimal values.")
 public class AddTransactionRequestDTO {
-    @NotNull
+/*    @NotNull
     private Product product;
 
     @NotNull
-    private Customer customer;
+    private Customer customer;*/
 
     @NotNull
+    private long product_id;
+
+    @NotNull
+    private long customer_id;
+
+    @NotNull
+    @Positive
     private double quantity;
 
     @NotNull
-    @ValidEnum(enumClass = TransactionEnumeration.TransactionType.class, message = "No such transaction type exists. Only BUY or SELL")
     private TransactionEnumeration.TransactionType transactionType;
 
     @NotNull
+    @PositiveOrZero
     private double totalPrice;
 }
