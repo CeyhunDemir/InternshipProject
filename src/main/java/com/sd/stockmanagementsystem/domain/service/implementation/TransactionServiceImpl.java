@@ -23,17 +23,25 @@ public class TransactionServiceImpl implements ITransactionService {
     private final IProductService productService;
     private final ICustomerService customerService;
     @Override
+    @Transactional
     public void addTransaction(AddTransactionRequestDTO addTransactionRequestDTO) {
         Transaction transaction = Transaction.builder()
                 .product(productService.getProductById(addTransactionRequestDTO.getProduct_id()))
-                .customer(customerService.getCustomerById(addTransactionRequestDTO.getCustomer_id()))
+                .customer((addTransactionRequestDTO.getCustomer_id() == null)? null : customerService.getCustomerById(addTransactionRequestDTO.getCustomer_id()))
+                .transactionDate(addTransactionRequestDTO.getTransactionDate())
                 .quantity(addTransactionRequestDTO.getQuantity())
                 .transactionType(addTransactionRequestDTO.getTransactionType())
                 .totalPrice(addTransactionRequestDTO.getTotalPrice())
                 .build();
         transactionRepository.save(transaction);
+        productService.updateProductQuantity
+                (
+                addTransactionRequestDTO.getProduct_id(),
+                addTransactionRequestDTO.getQuantity(),
+                addTransactionRequestDTO.getTransactionType()
+                );
     }
-    @Transactional
+    /*@Transactional
     @Override
     public double calculateQuantity(long id) {
         List<Transaction> transactions = transactionRepository.findByProduct_Id(id);
@@ -45,5 +53,5 @@ public class TransactionServiceImpl implements ITransactionService {
                 totalQuantity += transaction.getQuantity();
         }
         return totalQuantity;
-    }
+    }*/
 }

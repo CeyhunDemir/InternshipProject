@@ -9,6 +9,8 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.AllArgsConstructor;
 
+import java.util.Optional;
+
 @AllArgsConstructor
 public class ValidQuantityOfTransactionValidator implements ConstraintValidator<ValidQuantityOfTransaction, Object> {
     private final ITransactionService transactionService;
@@ -16,10 +18,6 @@ public class ValidQuantityOfTransactionValidator implements ConstraintValidator<
     @Override
     public boolean isValid(Object o, ConstraintValidatorContext constraintValidatorContext) {
         try {
-            /*var productField = o.getClass().getDeclaredField("product");*/
-            /*productField.setAccessible(true);*/
-            /*var productObj = productField.get(o);*/
-            /*Product product = (Product) productObj;*/
 
             var transactionQuantityField = o.getClass().getDeclaredField("quantity");
             transactionQuantityField.setAccessible(true);
@@ -32,8 +30,8 @@ public class ValidQuantityOfTransactionValidator implements ConstraintValidator<
             var product_idField = o.getClass().getDeclaredField("product_id");
             product_idField.setAccessible(true);
             long product_id = (long) product_idField.get(o);
-
-            double quantityInStock = transactionService.calculateQuantity(product_id);
+            Product product = productService.getProductById(product_id);
+            double quantityInStock = product.getQuantity();
 
 
             if (transactionType == TransactionEnumeration.TransactionType.SELL) {

@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 
 @Entity
 @Table(name = "customer")
@@ -33,9 +34,9 @@ public class Customer {
 
     @Column(name = "customer_createdAt")
     @CreationTimestamp
-    private Timestamp createdAt;
+    private Instant createdAt;
 
     @Column(name = "customer_updatedAt")
     @UpdateTimestamp
-    private Timestamp updatedAt;
+    private Instant updatedAt;
 }

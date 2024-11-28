@@ -53,6 +53,10 @@ public class CustomerServiceImpl implements ICustomerService {
 
     @Override
     public Customer getCustomerById(long id) {
+        Long cust_id = id;
+        if(cust_id == null){
+            return null;
+        }
         Optional<Customer> customer = customerRepository.findById(id);
         if (customer.isPresent()) {
             return customer.get();

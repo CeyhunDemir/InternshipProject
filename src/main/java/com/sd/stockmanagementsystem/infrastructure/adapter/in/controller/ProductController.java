@@ -6,6 +6,7 @@ import com.sd.stockmanagementsystem.application.dto.request.UpdateProductRequest
 import com.sd.stockmanagementsystem.domain.service.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

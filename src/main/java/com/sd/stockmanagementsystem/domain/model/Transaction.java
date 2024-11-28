@@ -10,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 
 @Entity
 @Table(name = "transaction")
@@ -29,11 +30,12 @@ public class Transaction {
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = true)
     private Customer customer;
 
     @Column(name = "transaction_transactionDate")
-    private Timestamp transactionDate;
+    @CreationTimestamp
+    private Instant transactionDate;
 
     @Column(name = "transaction_quantity")
     private double quantity;
@@ -47,9 +49,9 @@ public class Transaction {
 
     @Column(name = "transaction_createdAt")
     @CreationTimestamp
-    private Timestamp createdAt;
+    private Instant createdAt;
 
     @Column(name = "transaction_updatedAt")
     @UpdateTimestamp
-    private Timestamp updatedAt;
+    private Instant updatedAt;
 }

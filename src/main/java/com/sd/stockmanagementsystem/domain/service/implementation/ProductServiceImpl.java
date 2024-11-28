@@ -3,8 +3,10 @@ package com.sd.stockmanagementsystem.domain.service.implementation;
 import com.sd.stockmanagementsystem.application.dto.request.AddProductRequestDTO;
 import com.sd.stockmanagementsystem.application.dto.request.DeleteProductRequestDTO;
 import com.sd.stockmanagementsystem.application.dto.request.UpdateProductRequestDTO;
+import com.sd.stockmanagementsystem.domain.enumeration.TransactionEnumeration;
 import com.sd.stockmanagementsystem.domain.model.Product;
 import com.sd.stockmanagementsystem.domain.service.IProductService;
+import com.sd.stockmanagementsystem.domain.service.ITransactionService;
 import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.mapper.IGeneralMapperService;
 import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @Service
@@ -56,6 +59,25 @@ public class ProductServiceImpl implements IProductService{
         Optional<Product> product = productRepository.findById(id);
         if (product.isPresent()){
             return product.get();
+        }
+        else{
+            throw new EntityNotFoundException("Product id does not exist!");
+        }
+    }
+
+    @Override
+    public void updateProductQuantity(long id, double quantity, TransactionEnumeration.TransactionType transactionType) {
+        Optional<Product> product = productRepository.findById(id);
+        if (product.isPresent()){
+            Product productObj = product.get();
+            productObj.setUpdatedAt(Instant.now());
+            if (transactionType == TransactionEnumeration.TransactionType.BUY){
+                productObj.setQuantity(productObj.getQuantity() + quantity);
+            }
+            else{
+                productObj.setQuantity(productObj.getQuantity() - quantity);
+            }
+            productRepository.save(productObj);
         }
         else{
             throw new EntityNotFoundException("Product id does not exist!");

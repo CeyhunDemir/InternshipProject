@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 
 
 @Data
@@ -32,8 +33,10 @@ public class AddTransactionRequestDTO {
     @NotNull
     private long product_id;
 
-    @NotNull
-    private long customer_id;
+/*    @NotNull*/
+    private Long customer_id;
+
+    private Instant transactionDate;
 
     @NotNull
     @Positive
