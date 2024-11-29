@@ -3,6 +3,7 @@ package com.sd.stockmanagementsystem.domain.service.implementation;
 import com.sd.stockmanagementsystem.application.dto.request.AddProductRequestDTO;
 import com.sd.stockmanagementsystem.application.dto.request.DeleteProductRequestDTO;
 import com.sd.stockmanagementsystem.application.dto.request.UpdateProductRequestDTO;
+import com.sd.stockmanagementsystem.application.dto.response.GetAllProductsResponseDTO;
 import com.sd.stockmanagementsystem.domain.enumeration.TransactionEnumeration;
 import com.sd.stockmanagementsystem.domain.model.Product;
 import com.sd.stockmanagementsystem.domain.service.IProductService;
@@ -15,6 +16,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -82,5 +85,15 @@ public class ProductServiceImpl implements IProductService{
         else{
             throw new EntityNotFoundException("Product id does not exist!");
         }
+    }
+
+    @Override
+    public List<GetAllProductsResponseDTO> getAllProducts() {
+        List<Product> allProductsList = productRepository.findAll();
+        List<GetAllProductsResponseDTO> getAllProductsResponseDTOs = new ArrayList<>();
+        for (Product product: allProductsList){
+            getAllProductsResponseDTOs.add(productMapperService.forResponse().map(product, GetAllProductsResponseDTO.class));
+        }
+        return getAllProductsResponseDTOs;
     }
 }
