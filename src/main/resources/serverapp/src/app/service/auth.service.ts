@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap} from 'rxjs';
 import { environment } from '../components/environment/environment.dev';
+import { LocalStorageService } from './local-storage.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +14,7 @@ export class AuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
 
   private http = inject(HttpClient);
+  private storage = inject(LocalStorageService)
   constructor() { }
 
   login(user: {
@@ -30,11 +33,11 @@ export class AuthService {
   }
 
   private storeJwtToken(jwt: string){
-    localStorage.setItem(this.JWT_TOKEN, jwt);
+    this.storage.setItem(this.JWT_TOKEN, jwt);
   }
 
   logout(){
-    localStorage.removeItem(this.JWT_TOKEN);
+    this.storage.removeItem(this.JWT_TOKEN);
     this.isAuthenticatedSubject.next(false);
   }
 }
