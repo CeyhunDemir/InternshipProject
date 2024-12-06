@@ -1,0 +1,42 @@
+.login{
+    margin-top: 180px;
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
+    width: 30%;
+    min-width: 500px;
+    padding: 10px;
+}
+.title{
+    font-size: 30px;
+    text-align: center;
+    margin-bottom: 40px;
+}
+.input_bar{
+    background-color: #406075;
+    color: white;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 2px solid #027c8c;
+    border-radius: 10px;
+}
+.login_button{
+    background-color: #387478;
+    border: 0px solid white;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    width: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+.login_button:hover{
+    background-color: #629584;
+    color: #4cfa93;
+}

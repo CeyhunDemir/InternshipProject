@@ -1,0 +1,37 @@
+.container{
+    margin: auto;
+    width: 50%;
+    min-width: 900px;
+    padding: 10px;
+
+}
+.table{
+    margin: auto;
+    width: 50%;
+    min-width: 900px;
+    padding: 10px;
+    border-collapse: collapse;
+}
+.table_title{
+    text-align: center;
+}
+
+.table_head{
+    background-color: #2a874f;
+    border: solid 2px #008697;
+
+}
+.table_body{
+
+}
+.table_row:nth-child(odd){
+    background-color: #629584;
+    border: solid 2px #008697;
+}
+.table_row:nth-child(even){
+    background-color: #4e7769;
+    border: solid 2px #008697;
+}
+.table_cell{
+    text-align: center;
+}
