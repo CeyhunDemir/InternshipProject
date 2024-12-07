@@ -3,6 +3,9 @@
     width: 50%;
     min-width: 900px;
     padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
 }
 .table{
@@ -13,25 +16,86 @@
     border-collapse: collapse;
 }
 .table_title{
-    text-align: center;
+    width: fit-content;
+}
+.table_responsive{
+    width: fit-content;
+    margin-top:45px ;
+    margin-right: 50px;
+}
+
+.table_addProduct{
+    margin-top: 10px;
+    background-color: #016001;
+    border: 0px solid white;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 500;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+
+}
+.table_addProduct:hover{
+    background-color: #003c00;
+    color: #acacac;
+}
+
+.table_deleteProduct{
+    margin-top: 10px;
+    background-color: #950202;
+    border: 0px solid white;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 500;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+.table_deleteProduct:hover{
+    background-color: #6e0101;
+    color: #acacac;
+}
+
+.table_editProduct{
+    margin-top: 10px;
+    background-color: #d14a00;
+    border: 0px solid white;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 500;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+
+}
+.table_editProduct:hover{
+    background-color: #953600;
+    color: #acacac;
 }
 
 .table_head{
     background-color: #2a874f;
-    border: solid 2px #008697;
-
 }
 .table_body{
 
 }
 .table_row:nth-child(odd){
     background-color: #629584;
-    border: solid 2px #008697;
 }
 .table_row:nth-child(even){
     background-color: #4e7769;
-    border: solid 2px #008697;
 }
-.table_cell{
-    text-align: center;
+.cell{
+    border: solid 1px #50b6c3;
+}
+
+.cell_edit{
+    width: fit-content;
+    background-color: #243642;
+    border: 0px solid white;
+    width: 40px;
 }

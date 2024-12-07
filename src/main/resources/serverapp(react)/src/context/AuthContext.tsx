@@ -1,30 +1,29 @@
-import {createContext, ReactNode, useContext, useEffect, useState} from "react";
-import axios from "axios";
+import React, { createContext, useContext, useState } from 'react';
+import {useNavigate} from "react-router-dom";
 
-
-
-
-interface AuthContextType {
-    token: string | null;
-    setToken: (token: string | null) => void;
+interface AuthAttributes{
+    isAuthenticated: boolean;
+    login: () => void;
+    logout: () => void;
 }
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }:{children: ReactNode}) => {
-    const [token, setToken] = useState<string | null>(null);
+const AuthContext = createContext<AuthAttributes | undefined>(undefined);
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const login = () => setIsAuthenticated(true);
+    const logout = () => setIsAuthenticated(false);
     return (
-        <AuthContext.Provider value={{token, setToken}}>
+        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
             {children}
         </AuthContext.Provider>
-    )
-
-}
+    );
+};
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
-        throw new Error("useAuth must be used within the AuthProvider");
+        throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;
-}
-
+};

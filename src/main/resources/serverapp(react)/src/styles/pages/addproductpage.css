@@ -1,0 +1,57 @@
+.container{
+    min-width: 800px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px;
+
+}
+.titles{
+    display: flex;
+    align-items: center;
+    padding: 0px;
+}
+
+
+.addProductPage{
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
+    width: 30%;
+    min-width: 800px;
+
+}
+
+.deleteButton{
+    margin-bottom: 15px;
+    background-color: #950202;
+    border: 0px solid white;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 500;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.addButton{
+    background-color: #016001;
+    border: 0px solid white;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 500;
+    color: white;
+    margin-bottom: 15px;
+    padding: 5px 10px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.select_bar{
+    background-color: #406075;
+    color: white;
+    margin-bottom: 16px;
+    border-radius: 10px;
+}

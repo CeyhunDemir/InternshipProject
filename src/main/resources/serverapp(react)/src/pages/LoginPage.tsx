@@ -12,12 +12,14 @@ export const Login = () => {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
     const axiosInstance = useAxios();
+    const { login } = useAuth();
     const handleLogin = async () => {
 
         try {
             const response = await axiosInstance.post("/v1/auth/authenticate", {email, password})
             if (response.status === 200) {
                 localStorage.setItem("token", response.data.token);
+                login();
                 navigate("/products");
             }
         }

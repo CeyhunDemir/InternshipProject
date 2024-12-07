@@ -1,7 +1,7 @@
 package com.sd.stockmanagementsystem.application.port.input;
 
-import com.sd.stockmanagementsystem.domain.model.Product;
+import com.sd.stockmanagementsystem.application.dto.response.GetProductByIdResponseDTO;
 
 public interface GetProductByIdUseCase {
-    Product getProductById(long id);
+    GetProductByIdResponseDTO getProductById(long id);
 }
