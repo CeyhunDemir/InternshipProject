@@ -7,6 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "customer")
@@ -39,4 +40,7 @@ public class Customer {
     @Column(name = "customer_updatedAt")
     @UpdateTimestamp
     private Instant updatedAt;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions;
 }

@@ -2,7 +2,7 @@
     min-width: 800px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     padding: 0px;
 
 }
@@ -52,6 +52,20 @@
 .select_bar{
     background-color: #406075;
     color: white;
+    margin-top: 0px;
     margin-bottom: 16px;
+    border-radius: 10px;
+    height: 37px;
+}
+
+.input_bar_withDropdown{
+
+}
+
+.input_bar_new{
+    background-color: #406075;
+    color: white;
+    padding: 10px;
+    border: 2px solid #027c8c;
     border-radius: 10px;
 }

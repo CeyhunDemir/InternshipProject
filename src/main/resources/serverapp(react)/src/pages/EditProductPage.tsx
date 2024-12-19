@@ -16,7 +16,6 @@ export const EditProductPage = () => {
     const [price, setPrice] = useState(1);
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const [deleteSuccess, setDeleteSuccess] = useState(false);
-    const [product, setProduct] = useState<Product>();
     const axiosInstance = useAxios();
     const navigate = useNavigate();
 
@@ -38,7 +37,6 @@ export const EditProductPage = () => {
         const getProducts = async () => {
             const response = await axiosInstance.get(`/v1/product/${productId}`);
             if (response.status === 200) {
-                setProduct(response.data);
                 setName(response.data.name);
                 setQuantity(response.data.quantity);
                 setUnitType(response.data.unitType);
@@ -74,7 +72,7 @@ export const EditProductPage = () => {
                     type="string"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder={product?.name}/>
+                    placeholder={name}/>
                 <input
                     className="input_bar"
                     type="number"
@@ -104,7 +102,7 @@ export const EditProductPage = () => {
                         </button>}
                     onOpen={handleSubmit}
                     position="bottom center">
-                    {submitSuccess ? (<div>Successfully added the product!</div>): <div>Product could not be added!</div>}
+                    {submitSuccess ? (<div>Successfully updated the product!</div>): <div>Product could not be updated!</div>}
                 </Popup>
 
                 <Popup

@@ -5,8 +5,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "product")
@@ -20,7 +22,7 @@ public class Product {
     @Column(name = "product_id")
     private long id;
 
-    @Column(name = "product_name")
+    @Column(name = "product_name", unique = true, nullable = false)
     private String name;
 
     @Column(name = "product_unitType")
@@ -40,5 +42,8 @@ public class Product {
     @Column(name = "product_updatedAt")
     @UpdateTimestamp
     private Instant updatedAt;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transaction> transactions;
 
 }

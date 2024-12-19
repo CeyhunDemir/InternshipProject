@@ -9,6 +9,12 @@ import ProtectedRoute from "./routes/ProtectedRoute.tsx";
 import {HomePage} from "./pages/Home.tsx";
 import {AddProductPage} from "./pages/AddProductPage.tsx";
 import {EditProductPage} from "./pages/EditProductPage.tsx";
+import {EditCustomerPage} from "./pages/EditCustomerPage.tsx";
+import {AddCustomerPage} from "./pages/AddCustomerPage.tsx";
+import {AllCustomersPage} from "./pages/AllCustomersPage.tsx";
+import {AllTransactionsPage} from "./pages/AllTransactionsPage.tsx";
+import {AddTransactionsPage} from "./pages/AddTransactionsPage.tsx";
+import {SearchProductPage} from "./pages/SearchProductPage.tsx";
 import { useParams } from 'react-router-dom';
 
 function App() {
@@ -18,14 +24,18 @@ function App() {
           <Routes>
                 <Route element={<Layout/>}>
 
-                    <Route path="/" element={<HomePage/>}/>
-                    <Route path="/login" element={<Login/>}/>
-                    <Route path="/products" element={
+                    <Route path="/"
+                           element={<HomePage/>}/>
+                    <Route path="/login"
+                           element={<Login/>}/>
+                    <Route path="/products"
+                           element={
                         <ProtectedRoute>
                         <AllProductsPage/>
                         </ProtectedRoute>
                     }/>
-                    <Route path="/addProduct" element={
+                    <Route path="/addProduct"
+                           element={
                         <ProtectedRoute>
                             <AddProductPage/>
                         </ProtectedRoute>
@@ -34,6 +44,42 @@ function App() {
                            element={
                         <ProtectedRoute>
                             <EditProductPage/>
+                        </ProtectedRoute>
+                    }/>
+                    <Route path="/searchProduct"
+                           element={
+                        <ProtectedRoute>
+                            <SearchProductPage/>
+                        </ProtectedRoute>
+                           }/>
+                    <Route path="/customers"
+                           element={
+                        <ProtectedRoute>
+                            <AllCustomersPage/>
+                        </ProtectedRoute>
+                    }/>
+                    <Route path="/addCustomer"
+                           element={
+                        <ProtectedRoute>
+                            <AddCustomerPage/>
+                        </ProtectedRoute>
+                    }/>
+                    <Route path="/editCustomer/:customerId"
+                           element={
+                               <ProtectedRoute>
+                                   <EditCustomerPage/>
+                               </ProtectedRoute>
+                           }/>
+                    <Route path="/transactions"
+                           element={
+                               <ProtectedRoute>
+                                   <AllTransactionsPage/>
+                               </ProtectedRoute>
+                           }/>
+                    <Route path="/addTransaction"
+                           element={
+                        <ProtectedRoute>
+                            <AddTransactionsPage/>
                         </ProtectedRoute>
                     }/>
 

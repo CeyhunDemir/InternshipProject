@@ -3,7 +3,9 @@ package com.sd.stockmanagementsystem.domain.service.implementation;
 import com.sd.stockmanagementsystem.application.dto.request.AddProductRequestDTO;
 import com.sd.stockmanagementsystem.application.dto.request.DeleteProductRequestDTO;
 import com.sd.stockmanagementsystem.application.dto.request.UpdateProductRequestDTO;
+import com.sd.stockmanagementsystem.application.dto.response.GetAllProductsBySubstringResponseDTO;
 import com.sd.stockmanagementsystem.application.dto.response.GetAllProductsResponseDTO;
+import com.sd.stockmanagementsystem.application.dto.response.GetProductByIdResponseDTO;
 import com.sd.stockmanagementsystem.domain.enumeration.TransactionEnumeration;
 import com.sd.stockmanagementsystem.domain.model.Product;
 import com.sd.stockmanagementsystem.domain.service.IProductService;
@@ -47,8 +49,8 @@ public class ProductServiceImpl implements IProductService{
     }
 
     @Override
-    public void deleteProduct(DeleteProductRequestDTO deleteProductRequestDTO) {
-        Optional<Product> product = productRepository.findById(deleteProductRequestDTO.getId());
+    public void deleteProduct(long id) {
+        Optional<Product> product = productRepository.findById(id);
         if (product.isPresent()){
             productRepository.delete(product.get());
         }
@@ -58,7 +60,7 @@ public class ProductServiceImpl implements IProductService{
 
 
     @Override
-    public Product getProductById(long id) {
+    public Product findProductById(long id) {
         Optional<Product> product = productRepository.findById(id);
         if (product.isPresent()){
             return product.get();
@@ -69,8 +71,8 @@ public class ProductServiceImpl implements IProductService{
     }
 
     @Override
-    public void updateProductQuantity(long id, double quantity, TransactionEnumeration.TransactionType transactionType) {
-        Optional<Product> product = productRepository.findById(id);
+    public void updateProductQuantity(String name, double quantity, TransactionEnumeration.TransactionType transactionType) {
+        Optional<Product> product = productRepository.findByName(name);
         if (product.isPresent()){
             Product productObj = product.get();
             productObj.setUpdatedAt(Instant.now());
@@ -95,5 +97,38 @@ public class ProductServiceImpl implements IProductService{
             getAllProductsResponseDTOs.add(productMapperService.forResponse().map(product, GetAllProductsResponseDTO.class));
         }
         return getAllProductsResponseDTOs;
+    }
+
+    @Override
+    public GetProductByIdResponseDTO getProductById(long id) {
+        Product product = findProductById(id);
+        GetProductByIdResponseDTO getProductByIdResponseDTO = productMapperService.forResponse().map(product, GetProductByIdResponseDTO.class);
+        return getProductByIdResponseDTO;
+    }
+
+    @Override
+    public List<GetAllProductsBySubstringResponseDTO> getAllProductsBySubstring(String subString) {
+        List<Product> allProductsList = productRepository.findBySubstring(subString);
+        List<GetAllProductsBySubstringResponseDTO> getAllProductsBySubstringResponseDTOs = new ArrayList<>();
+        for (Product product: allProductsList){
+            getAllProductsBySubstringResponseDTOs
+                    .add
+                            (productMapperService
+                                    .forResponse()
+                                    .map(product, GetAllProductsBySubstringResponseDTO.class)
+                            );
+        }
+        return getAllProductsBySubstringResponseDTOs;
+    }
+
+    @Override
+    public Product findProductByName(String name) {
+        Optional<Product> product = productRepository.findByName(name);
+        if (product.isPresent()){
+            return product.get();
+        }
+        else {
+            throw new EntityNotFoundException("Product name does not exist!");
+        }
     }
 }

@@ -1,0 +1,100 @@
+.filter_menu {
+    background-color: #387478;
+    margin-top: 30px;
+    padding: 20px;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    width: 17%;
+    border-collapse: collapse;
+    border: #33a662 solid 2px;
+    border-radius: 10px;
+}
+.filter_menu_container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-collapse: collapse;
+    border-bottom: #23dc6e solid 2px;
+}
+.filter_menu_container h4{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.filter_menu_container h3{
+    margin:0;
+}
+
+.filter_body{
+    display: flex;
+    justify-content: left;
+    align-items: baseline;
+    flex-direction: row;
+}
+.filter_body div input{
+    width:100px;
+    border: 2px solid #027c8c;
+    border-radius: 10px;
+    background-color: #406075;
+    color: white;
+    padding: 10px;
+
+}
+.filter_body div p{
+    margin: 0;
+}
+
+.radio_inputs {
+    display: flex;
+    flex-direction: column;
+}
+.filter_menu button{
+    width: 100px;
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 24px;
+    border-radius: 10px;
+    margin-left: 210px;
+    margin-top: 10px;
+    background-color: #2a874f;
+    color: white;
+    border: none;
+    transition: 0.3s;
+    padding: 5px;
+}
+.filter_menu button:hover{
+    background-color: #1d5c36;
+    color: #b6b5b5;
+}
+
+.radio_inputs{
+    display: flex;
+    flex-direction: row;
+}
+
+.radio_inputs input{
+    width: 20px;
+}
+
+.radio_inputs label input[type='radio']{
+    accent-color: #2a874f;
+}
+
+.radio_inputs label input[type='radio']:checked{
+    background-color: #1d5c36;
+}
+
+.filter_body label{
+    margin-right: 20px;
+}
+
+.filter_body label input[type='radio']{
+    accent-color: #2a874f;
+}
+
+.radio_inputs select{
+    background-color: #406075;
+    color: white;
+    padding: 2px;
+    border: 2px solid #027c8c;
+    border-radius: 10px;
+}

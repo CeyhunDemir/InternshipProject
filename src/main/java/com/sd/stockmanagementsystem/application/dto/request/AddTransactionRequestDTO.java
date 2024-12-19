@@ -6,6 +6,7 @@ import com.sd.stockmanagementsystem.application.dto.valid.ValidQuantityOfTransac
 import com.sd.stockmanagementsystem.domain.enumeration.TransactionEnumeration;
 import com.sd.stockmanagementsystem.domain.model.Customer;
 import com.sd.stockmanagementsystem.domain.model.Product;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -31,12 +32,11 @@ public class AddTransactionRequestDTO {
     private Customer customer;*/
 
     @NotNull
-    private long product_id;
+    @NotBlank
+    private String product_name;
 
 /*    @NotNull*/
-    private Long customer_id;
-
-    private Instant transactionDate;
+    private String customer_name;
 
     @NotNull
     @Positive

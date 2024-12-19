@@ -4,6 +4,7 @@ import React, {useState} from "react";
 import {useAuth} from "../context/AuthContext.tsx";
 import {Link, useNavigate} from "react-router-dom";
 import useAxios from "../interceptors/AxiosInstance.tsx";
+import useAxiosLogin from "../interceptors/AxiosLoginInstance.tsx";
 const api = "http://localhost:8080/api"
 
 
@@ -11,12 +12,12 @@ export const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
-    const axiosInstance = useAxios();
+    const axiosLoginInstance = useAxiosLogin();
     const { login } = useAuth();
     const handleLogin = async () => {
 
         try {
-            const response = await axiosInstance.post("/v1/auth/authenticate", {email, password})
+            const response = await axiosLoginInstance.post("/v1/auth/authenticate", {email, password})
             if (response.status === 200) {
                 localStorage.setItem("token", response.data.token);
                 login();

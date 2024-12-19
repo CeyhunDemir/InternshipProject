@@ -1,7 +1,7 @@
 .container{
     margin: auto;
     width: 50%;
-    min-width: 900px;
+    min-width: 920px;
     padding: 10px;
     display: flex;
     justify-content: space-between;
@@ -11,7 +11,7 @@
 .table{
     margin: auto;
     width: 50%;
-    min-width: 900px;
+    min-width: 920px;
     padding: 10px;
     border-collapse: collapse;
 }
@@ -24,7 +24,7 @@
     margin-right: 50px;
 }
 
-.table_addProduct{
+.table_add{
     margin-top: 10px;
     background-color: #016001;
     border: 0px solid white;
@@ -37,14 +37,14 @@
     transition: background-color 0.3s, color 0.3s;
 
 }
-.table_addProduct:hover{
+.table_add:hover{
     background-color: #003c00;
     color: #acacac;
 }
 
-.table_deleteProduct{
+.table_search{
     margin-top: 10px;
-    background-color: #950202;
+    background-color: #878787;
     border: 0px solid white;
     font-family: "IBM Plex Sans", sans-serif;
     font-weight: 500;
@@ -54,12 +54,12 @@
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
 }
-.table_deleteProduct:hover{
-    background-color: #6e0101;
+.table_search:hover{
+    background-color: #616161;
     color: #acacac;
 }
 
-.table_editProduct{
+.table_edit{
     margin-top: 10px;
     background-color: #d14a00;
     border: 0px solid white;
@@ -72,7 +72,7 @@
     transition: background-color 0.3s, color 0.3s;
 
 }
-.table_editProduct:hover{
+.table_edit:hover{
     background-color: #953600;
     color: #acacac;
 }

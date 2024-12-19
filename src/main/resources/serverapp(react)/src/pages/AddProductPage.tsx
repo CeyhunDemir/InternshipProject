@@ -1,6 +1,6 @@
 import {useState} from "react";
 import useAxios from "../interceptors/AxiosInstance.tsx";
-import "../styles/pages/addproductpage.css"
+import "../styles/pages/addpage.css"
 import Popup from 'reactjs-popup';
 
 export const AddProductPage = () => {
@@ -36,13 +36,13 @@ export const AddProductPage = () => {
         </div>
         <div className="container">
             <input
-                className="input_bar"
+                className="input_bar_new"
                 type="string"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Product Name"/>
             <input
-                className="input_bar"
+                className="input_bar_new"
                 type="number"
                 value={quantity}
                 onChange={(e) => setQuantity(Number(e.target.value))}/>
@@ -57,7 +57,7 @@ export const AddProductPage = () => {
 
             </select>
             <input
-                className="input_bar"
+                className="input_bar_new"
                 type="number"
                 value={price}
                 onChange={(e) => setPrice(Number(e.target.value))}/>
@@ -70,7 +70,7 @@ export const AddProductPage = () => {
                        </button>}
                    onOpen={handleSubmit}
                    position="right center">
-                  {success ? (<div>Successfully added the product!</div>): <div>Product could not added!</div>}
+                  {success ? (<div>Successfully added the product!</div>): <div>Product could not be added!</div>}
             </Popup>
         </div>
     </div>

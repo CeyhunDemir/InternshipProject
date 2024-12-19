@@ -14,7 +14,7 @@ const Navigationbar = () =>{
             <div className="navbar-body">
                 <button className="navbar-button" onClick={() => {navigate("/products")} }>Products</button>
                 <button className="navbar-button" onClick={() => {navigate("/customers")} }>Customers</button>
-                <button className="navbar-button" onClick={() => {navigate("/sales")} }>Sales</button>
+                <button className="navbar-button" onClick={() => {navigate("/transactions")} }>Transactions</button>
                 {isAuthenticated ?
                     (<button className="navbar-button" onClick={() => {logout(); navigate("/login");} }>Logout</button>):
                     (<button className="navbar-button" onClick={() => {navigate("/login")} }>Login</button>)

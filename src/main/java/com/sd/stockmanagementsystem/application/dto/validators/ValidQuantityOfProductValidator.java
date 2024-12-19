@@ -17,9 +17,9 @@ public class ValidQuantityOfProductValidator implements ConstraintValidator<Vali
             /*var productField = o.getClass().getDeclaredField("product");
             productField.setAccessible(true);*/
 
-            var product_idField = o.getClass().getDeclaredField("product_id");
-            product_idField.setAccessible(true);
-            Product product = productService.getProductById(product_idField.getLong(o));
+            var product_nameField = o.getClass().getDeclaredField("product_name");
+            product_nameField.setAccessible(true);
+            Product product = productService.findProductByName((String) product_nameField.get(o));
 
             var quantityField = o.getClass().getDeclaredField("quantity");
             quantityField.setAccessible(true);

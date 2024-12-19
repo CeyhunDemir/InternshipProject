@@ -1,5 +1,6 @@
 package com.sd.stockmanagementsystem.infrastructure.security;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import java.util.logging.Logger;
 
 import java.util.Arrays;
 
@@ -30,9 +32,9 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http.cors(Customizer.withDefaults()) // Enable CORS support
                 .csrf(AbstractHttpConfigurer::disable)
-                // Disable CSRF for API
                 .authorizeHttpRequests(
                         authorize -> authorize
                                 .requestMatchers("/api/v1/auth/authenticate").permitAll() // Public endpoint
