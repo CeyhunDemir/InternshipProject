@@ -5,11 +5,10 @@ import com.sd.stockmanagementsystem.application.port.input.*;
 public interface IProductService extends AddProductUseCase,
         UpdateProductUseCase,
         DeleteProductUseCase,
-        FindProductByIdUseCase,
-        FindProductByNameUseCase,
+        FindProductByProductKeyUseCase,
         UpdateProductQuantityUseCase,
         GetAllProductsUseCase,
-        GetProductByIdUseCase,
+        GetProductByProductKeyUseCase,
         GetAllProductsBySubstringUseCase{
 
 }

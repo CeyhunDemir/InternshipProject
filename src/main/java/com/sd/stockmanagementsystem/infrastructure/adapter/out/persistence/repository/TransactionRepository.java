@@ -11,6 +11,6 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface TransactionRepository extends JpaRepository<Transaction, Integer>, TransactionRepositoryPort, JpaSpecificationExecutor<Transaction> {
+public interface TransactionRepository extends JpaRepository<Transaction, Long>, TransactionRepositoryPort, JpaSpecificationExecutor<Transaction> {
     List<Transaction> findByProduct_Id(long productId);
 }

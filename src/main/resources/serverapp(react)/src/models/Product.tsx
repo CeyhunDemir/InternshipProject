@@ -3,5 +3,6 @@ export type Product  = {
     name: string;
     quantity: number;
     price: number;
-    unitType:string;
+    unitType: string;
+    expirable: string;
 }

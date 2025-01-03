@@ -1,7 +1,7 @@
 package com.sd.stockmanagementsystem.application.port.input;
 
-import com.sd.stockmanagementsystem.application.dto.request.DeleteCustomerRequestDTO;
+import com.sd.stockmanagementsystem.application.dto.core.CustomerKey;
 
 public interface DeleteCustomerUseCase {
-    void deleteCustomer(long id);
+    void deleteCustomer(CustomerKey customerKey);
 }

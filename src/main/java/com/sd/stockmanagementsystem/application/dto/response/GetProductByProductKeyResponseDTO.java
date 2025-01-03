@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetProductByIdResponseDTO {
+public class GetProductByProductKeyResponseDTO {
 
     private String name;
 

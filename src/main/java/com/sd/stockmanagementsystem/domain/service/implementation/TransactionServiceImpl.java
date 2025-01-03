@@ -1,8 +1,8 @@
 package com.sd.stockmanagementsystem.domain.service.implementation;
 
-import com.sd.stockmanagementsystem.application.dto.request.AddTransactionRequestDTO;
-import com.sd.stockmanagementsystem.application.dto.request.TransactionFilterDTO;
-import com.sd.stockmanagementsystem.application.dto.response.GetAllProductsBySubstringResponseDTO;
+import com.sd.stockmanagementsystem.application.dto.core.CustomerKey;
+import com.sd.stockmanagementsystem.application.dto.core.ProductKey;
+import com.sd.stockmanagementsystem.application.dto.request.*;
 import com.sd.stockmanagementsystem.application.dto.response.GetAllTransactionsResponseDTO;
 import com.sd.stockmanagementsystem.domain.enumeration.FilterEnum;
 import com.sd.stockmanagementsystem.domain.model.Transaction;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Filter;
 
 @Service
 @RequiredArgsConstructor
@@ -32,21 +31,29 @@ public class TransactionServiceImpl implements ITransactionService {
 
     @Override
     @Transactional
-    public void addTransaction(AddTransactionRequestDTO addTransactionRequestDTO) {
+    public void addTransactionByProductName(AddTransactionByProductNameRequestDTO addTransactionByProductNameRequestDTO) {
         Transaction transaction = Transaction.builder()
-                .product(productService.findProductByName(addTransactionRequestDTO.getProduct_name()))
-                .customer((addTransactionRequestDTO.getCustomer_name() == null)? null : customerService.findCustomerByName(addTransactionRequestDTO.getCustomer_name()))
-                .quantity(addTransactionRequestDTO.getQuantity())
-                .transactionType(addTransactionRequestDTO.getTransactionType())
-                .totalPrice(addTransactionRequestDTO.getTotalPrice())
+                .product(productService.findProductByProductKey(
+                        ProductKey.builder().name(
+                                        addTransactionByProductNameRequestDTO.getProduct_name())
+                                .build()))
+                .customer((addTransactionByProductNameRequestDTO.getCustomer_name() == null) ? null : customerService.findCustomerByCustomerKey(
+                        CustomerKey.builder().name(
+                                        addTransactionByProductNameRequestDTO.getCustomer_name())
+                                .build()))
+                .quantity(addTransactionByProductNameRequestDTO.getQuantity())
+                .transactionType(addTransactionByProductNameRequestDTO.getTransactionType())
+                .totalPrice(addTransactionByProductNameRequestDTO.getTotalPrice())
                 .build();
+
+        UpdateProductQuantityRequestDTO updateProductQuantityRequestDTO = UpdateProductQuantityRequestDTO.builder()
+                .name(addTransactionByProductNameRequestDTO.getProduct_name())
+                .quantity(addTransactionByProductNameRequestDTO.getQuantity())
+                .transactionType(addTransactionByProductNameRequestDTO.getTransactionType())
+                .build();
+
+        productService.updateProductQuantity(updateProductQuantityRequestDTO);
         transactionRepository.save(transaction);
-        productService.updateProductQuantity
-                (
-                addTransactionRequestDTO.getProduct_name(),
-                addTransactionRequestDTO.getQuantity(),
-                addTransactionRequestDTO.getTransactionType()
-                );
     }
 
     @Override
@@ -108,6 +115,24 @@ public class TransactionServiceImpl implements ITransactionService {
             getAllTransactionsResponseDTOs.add(transactionsResponseDTO);
         }
         return getAllTransactionsResponseDTOs;
+    }
+
+    @Override
+    @Transactional
+    public void addTransactionByBarcode(AddTransactionByBarcodeRequestDTO addTransactionByBarcodeRequestDTO) {
+
+    }
+
+    @Override
+    @Transactional
+    public void addMultipleTransactions(List<AddTransactionRequestDTO> addTransactionRequestDTOList) {
+        for (AddTransactionRequestDTO addTransactionRequestDTO : addTransactionRequestDTOList) {
+            if (addTransactionRequestDTO instanceof AddTransactionByBarcodeRequestDTO) {
+                this.addTransactionByBarcode((AddTransactionByBarcodeRequestDTO) addTransactionRequestDTO);
+            } else if (addTransactionRequestDTO instanceof AddTransactionByProductNameRequestDTO) {
+                this.addTransactionByProductName((AddTransactionByProductNameRequestDTO) addTransactionRequestDTO);
+            }
+        }
     }
 
 

@@ -7,7 +7,7 @@ import {Transaction} from "../models/Transaction.tsx";
 import TransactionsFilterMenu from "../components/TransactionsFilterMenu.tsx";
 
 
-export const AllTransactionsPage = () => {
+const AllTransactionsPage = () => {
 
     const [productName, setProductName] = useState<string | null>(null);
     const [minQuantity, setMinQuantity] = useState<number | null>(null);
@@ -88,32 +88,33 @@ export const AllTransactionsPage = () => {
                                     setOrderType={setOrderType}
                                     setApplyButtonValue={setApplyButtonValue}
                                     applyButtonValue={applyButtonValue}/>
-            <div className="container" style={{minWidth: "920px"}}>
+            <div className="container_header" style={{minWidth: "920px"}}>
                 <div>
                     <h1 className="table_title">All Transactions</h1>
                 </div>
                 <div className="table_responsive">
                     <button className="table_add"
-                            onClick={()=>navigate("/addTransaction")}>Add</button>
-                    <button className="table_search"
-                            onClick={()=>navigate("/searchTransaction")}>Search</button>
+                            onClick={() => navigate("/addTransaction")}>Add Transaction
+                    </button>
+                    {/*<button className="table_search"
+                            onClick={()=>navigate("/searchTransaction")}>Search</button>*/}
                 </div>
             </div>
             <div className = "table_table">
                 <table className="table">
                     <thead className="table_head">
-                    <tr >
+                    <tr key="header">
                         <td className="cell">Product Name</td>
                         <td className="cell">Quantity</td>
                         <td className="cell">Transaction Type</td>
                         <td className="cell">TotalPrice</td>
                         <td className="cell">CustomerName</td>
                         <td className="cell">Transaction Date</td>
-                        <td className="cell_edit"></td>
+                        <td className="cell_edit" style={{border: "0px"}}></td>
                     </tr>
                     </thead>
                     <tbody className="table_body">
-                    {transactions.map((transaction:any) => (<tr className="table_row" >
+                    {transactions.map((transaction: any) => (<tr className="table_row" key={transaction.id}>
                         <td className="cell">{transaction.productName}</td>
                         <td className="cell">{transaction.quantity}</td>
                         <td className="cell">{transaction.transactionType}</td>
@@ -123,6 +124,7 @@ export const AllTransactionsPage = () => {
 
                         <td className="cell_edit">
                             <button className="table_edit"
+                                    style={{border: "0px"}}
                                     onClick={() => navigate(`/editTransaction/${transaction.id}`)}>Edit
                             </button>
                         </td>
@@ -134,3 +136,4 @@ export const AllTransactionsPage = () => {
         </>
     );
 };
+export default AllTransactionsPage;

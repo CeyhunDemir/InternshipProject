@@ -41,7 +41,7 @@ const ProductNameInput = (props:Props)=> {
         }, 1000); // 1000ms = 1 second delay
 
         setDebounceTimer(newTimer);
-        props.setProductName(e.target.value);
+        props.setProductName(e.target.value.toLowerCase());
         if (e.target.value === "")
             props.setProductName(null);
 
@@ -50,7 +50,7 @@ const ProductNameInput = (props:Props)=> {
     const handleSelectProduct = (productName: string, productId:number) => {
         setQuery(productName);
         setShowDropdown(false);
-        props.setProductName(productName);
+        props.setProductName(productName.toLowerCase());
         if (props.setId) {
             props.setId(productId)
         }

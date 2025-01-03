@@ -5,7 +5,7 @@ import useAxios from "../interceptors/AxiosInstance.tsx";
 import Popup from "reactjs-popup";
 import {Customer} from "../models/Customer.tsx";
 
-export const EditCustomerPage = () => {
+const EditCustomerPage = () => {
     const {customerId} = useParams();
     const id:number = Number(customerId);
     const [name, setName] = useState("");
@@ -112,3 +112,4 @@ export const EditCustomerPage = () => {
         </div>
     )
 }
+export default EditCustomerPage;

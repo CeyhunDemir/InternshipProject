@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetCustomerByIdResponseDTO {
+public class GetCustomerByCustomerKeyResponseDTO {
 
     private String name;
 

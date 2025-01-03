@@ -4,8 +4,9 @@ import useAxios from '../interceptors/AxiosInstance.tsx';
 import "../styles/pages/allpage.css"
 import {useNavigate} from "react-router-dom";
 import {Customer} from "../models/Customer.tsx";
+import AddCustomerPage from "./AddCustomerPage.tsx";
 
-export const AllCustomersPage = () => {
+const AllCustomersPage = () => {
 
     const axiosInstance = useAxios();
     const [customers, setCustomers] = useState<Customer[]>([]);
@@ -33,32 +34,31 @@ export const AllCustomersPage = () => {
 
     return (
         <>
-            <div className="container" style={{minWidth: "920px"}}>
+            <div className="container_header" style={{minWidth: "920px"}}>
                 <div>
                     <h1 className="table_title">All Customers</h1>
                 </div>
                 <div className="table_responsive">
                     <button className="table_add"
-                            onClick={()=>navigate("/addCustomer")}>Add</button>
-                    <button className="table_search"
-                            onClick={()=>navigate("/searchCustomer")}>Search</button>
+                            onClick={() => navigate("/addCustomer")}>Add Customer
+                    </button>
                 </div>
             </div>
             <div className = "table_table">
                 <table className="table">
                     <thead className="table_head">
                     <tr >
-                        <td className="cell">ID</td>
+                        <td className="cell_id">ID</td>
                         <td className="cell">Name</td>
                         <td className="cell">Address</td>
                         <td className="cell">Email</td>
                         <td className="cell">Phone</td>
-                        <td className="cell_edit"></td>
+                        <td className="cell_edit" style={{border: "0px"}}></td>
                     </tr>
                     </thead>
                     <tbody className="table_body">
                     {customers.map((customer:any) => (<tr className="table_row" key={customer.id}>
-                        <td className="cell">{customer.id}</td>
+                        <td className="cell_id">{customer.id}</td>
                         <td className="cell">{customer.name}</td>
                         <td className="cell">{customer.address}</td>
                         <td className="cell">{customer.email}</td>
@@ -66,6 +66,7 @@ export const AllCustomersPage = () => {
 
                         <td className="cell_edit">
                             <button className="table_edit"
+                                    style={{border: "0px"}}
                                     onClick={() => navigate(`/editCustomer/${customer.id}`)}>Edit
                             </button>
                         </td>
@@ -77,3 +78,4 @@ export const AllCustomersPage = () => {
         </>
     );
 };
+export default AllCustomersPage;

@@ -33,11 +33,11 @@ public class Customer {
     @Column(name = "customer_phone")
     private String phone;
 
-    @Column(name = "customer_createdAt")
+    @Column(name = "customer_created_at")
     @CreationTimestamp
     private Instant createdAt;
 
-    @Column(name = "customer_updatedAt")
+    @Column(name = "customer_updated_at")
     @UpdateTimestamp
     private Instant updatedAt;
 

@@ -8,6 +8,16 @@
     align-items: center;
 
 }
+
+.container_header {
+    margin: auto;
+    width: 50%;
+    min-width: 920px;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
 .table{
     margin: auto;
     width: 50%;
@@ -27,6 +37,7 @@
 .table_add{
     margin-top: 10px;
     background-color: #016001;
+    width: auto;
     border: 0px solid white;
     font-family: "IBM Plex Sans", sans-serif;
     font-weight: 500;
@@ -42,6 +53,7 @@
     color: #acacac;
 }
 
+/*
 .table_search{
     margin-top: 10px;
     background-color: #878787;
@@ -57,7 +69,7 @@
 .table_search:hover{
     background-color: #616161;
     color: #acacac;
-}
+}*/
 
 .table_edit{
     margin-top: 10px;
@@ -80,17 +92,50 @@
 .table_head{
     background-color: #2a874f;
 }
+
+.table_head tr td {
+    border: solid 1px #50b6c3;
+}
+
 .table_body{
 
 }
+
+.table_body tr td {
+    border: solid 1px #50b6c3;
+}
+
+
 .table_row:nth-child(odd){
     background-color: #629584;
 }
 .table_row:nth-child(even){
     background-color: #4e7769;
 }
-.cell{
-    border: solid 1px #50b6c3;
+
+
+.cell_id {
+    width: 40px;
+}
+
+.cell_name {
+    width: 350px;
+}
+
+.cell_quantity {
+    width: 120px;
+}
+
+.cell_unitType {
+    width: 100px;
+}
+
+.cell_price {
+    width: 200px;
+}
+
+.cell_expirable {
+    width: 20px;
 }
 
 .cell_edit{

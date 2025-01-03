@@ -23,4 +23,5 @@ public class GetAllProductsResponseDTO {
     private double quantity;
 
     private double price;
+
 }

@@ -1,5 +1,6 @@
 package com.sd.stockmanagementsystem.application.dto.request;
 
+import com.sd.stockmanagementsystem.application.dto.valid.ValidEnum;
 import com.sd.stockmanagementsystem.application.dto.valid.ValidQuantityOfUnitType;
 import com.sd.stockmanagementsystem.domain.enumeration.ProductEnumeration;
 import jakarta.validation.constraints.NotBlank;
@@ -11,27 +12,28 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ValidQuantityOfUnitType(message = "Quantity must be an integer when the unit type is COUNT")
+/*@ValidQuantityOfUnitType(message = "Quantity must be an integer when the unit type is COUNT")*/
 public class UpdateProductRequestDTO {
-    @NotNull(message = "Product id can not be null!")
+
     private long id;
-    @NotNull(message = "Product name can not be null!")
-    @NotBlank(message = "Product name can not be blank!")
-    @Size(max = 100, message = "Product name can not exceed 100 characters.")
+
+    @NotBlank
+    @Size(max = 150, message = "Product name can not exceed 150 characters.")
     private String name;
 
     @NotNull(message = "Product unit type can not be null!")
+    @ValidEnum(message = "unitType should be one of the unit types!", enumClass = ProductEnumeration.UnitType.class)
     private ProductEnumeration.UnitType unitType;
-
-    @NotNull(message = "Product quantity can not be null!")
-    @Positive
-    private double quantity;
 
     @NotNull(message = "Product price can not be null!")
     @Positive
     private double price;
+
+    /*    private Map<String,String> attributes;*/
 }

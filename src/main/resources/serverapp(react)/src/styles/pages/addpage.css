@@ -1,15 +1,24 @@
 .container{
     min-width: 800px;
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
+    justify-content: start;
+    align-items: flex-end;
     padding: 0px;
 
 }
+
+.container div h1 {
+    font-size: 14px;
+}
+
 .titles{
     display: flex;
     align-items: center;
     padding: 0px;
+}
+
+.titles h1 {
+    font-size: 15px;
 }
 
 
@@ -42,7 +51,8 @@
     font-family: "IBM Plex Sans", sans-serif;
     font-weight: 500;
     color: white;
-    margin-bottom: 15px;
+    margin-bottom: 7px;
+    margin-top: 4px;
     padding: 5px 10px;
     border-radius: 9px;
     cursor: pointer;
@@ -53,9 +63,9 @@
     background-color: #406075;
     color: white;
     margin-top: 0px;
-    margin-bottom: 16px;
     border-radius: 10px;
     height: 37px;
+    margin-right: 30px;
 }
 
 .input_bar_withDropdown{
@@ -68,4 +78,12 @@
     padding: 10px;
     border: 2px solid #027c8c;
     border-radius: 10px;
+    margin-right: 20px;
+}
+
+.attribute {
+    min-width: 600px;
+    display: flex;
+    justify-content: start;
+    align-items: flex-end;
 }

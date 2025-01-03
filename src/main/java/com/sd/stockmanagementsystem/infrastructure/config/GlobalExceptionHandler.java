@@ -1,6 +1,7 @@
 package com.sd.stockmanagementsystem.infrastructure.config;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.postgresql.util.PSQLException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,10 +33,13 @@ public class GlobalExceptionHandler {
         errorsMap.put("errors", errors);
         return errorsMap;
     }
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Map<String,String>> handleEntityNotFoundException(EntityNotFoundException ex) {
+
+    @ExceptionHandler({PSQLException.class, DataIntegrityViolationException.class})
+    public ResponseEntity<Map<String, String>> handleDatabaseExceptions(Exception ex) {
         Map<String, String> errorsMap = new HashMap<>();
-        errorsMap.put("message", ex.getMessage());
-        return new ResponseEntity<>(errorsMap,new HttpHeaders(), HttpStatus.NOT_FOUND);
+        String message = ex.getMessage();
+        String extractedMessage = message.substring(message.indexOf("ERROR:"), message.indexOf("Detail:") - 2);
+        errorsMap.put("message", extractedMessage);
+        return new ResponseEntity<>(errorsMap, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 }

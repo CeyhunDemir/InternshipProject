@@ -2,8 +2,9 @@ import {useState} from "react";
 import useAxios from "../interceptors/AxiosInstance.tsx";
 import "../styles/pages/addpage.css"
 import Popup from 'reactjs-popup';
+import EditProductPage from "./EditProductPage.tsx";
 
-export const AddCustomerPage = () => {
+const AddCustomerPage = () => {
     const [name, setName] = useState("");
     const [address, setAddress] = useState("");
     const [email, setEmail] = useState("");
@@ -21,16 +22,16 @@ export const AddCustomerPage = () => {
         <div className="addProductPage">
             <h1>Add Customer</h1>
             <div className="titles">
-                <h1 style={{  fontSize: "15px", marginRight: "110px", marginLeft: "5px"   }}>
+                <h1 style={{marginRight: "110px", marginLeft: "5px"}}>
                     Customer Name
                 </h1>
-                <h1 style={{  fontSize: "15px", marginRight: "75px"  }}>
+                <h1 style={{marginRight: "75px"}}>
                     Customer Address
                 </h1>
-                <h1 style={{  fontSize: "15px"   }}>
+                <h1 style={{}}>
                     Customer Email
                 </h1>
-                <h1 style={{  fontSize: "15px" ,marginLeft: "10px"  }}>
+                <h1 style={{marginLeft: "10px"}}>
                     Customer Phone Number
                 </h1>
             </div>
@@ -74,3 +75,4 @@ export const AddCustomerPage = () => {
         </div>
     )
 }
+export default AddCustomerPage;

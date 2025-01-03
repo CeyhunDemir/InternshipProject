@@ -3,11 +3,12 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import useAxios from "../interceptors/AxiosInstance.tsx";
 import Popup from "reactjs-popup";
+import "../styles/pages/addpage.css"
 import toString from "axios";
 import {Product} from "../models/Product.tsx";
 import axios from "axios";
 
-export const EditProductPage = () => {
+const EditProductPage = () => {
     const {productId} = useParams();
     const id:number = Number(productId);
     const [name, setName] = useState("");
@@ -119,3 +120,4 @@ export const EditProductPage = () => {
         </div>
     )
 }
+export default EditProductPage;

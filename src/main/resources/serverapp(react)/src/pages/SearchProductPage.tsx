@@ -1,10 +1,11 @@
+/*
 import {useState} from "react";
 import useAxios from "../interceptors/AxiosInstance.tsx";
 import "../styles/pages/addpage.css"
 import ProductNameInput from "../components/ProductNameInput.tsx";
 import {useNavigate} from "react-router-dom";
 
-export const SearchProductPage = () => {
+const SearchProductPage = () => {
     const [name, setName] = useState<string | null>(null);
     const [id, setId] = useState(0);
     const axiosInstance = useAxios();
@@ -26,3 +27,4 @@ export const SearchProductPage = () => {
         </div>
     )
 }
+export default SearchProductPage;*/

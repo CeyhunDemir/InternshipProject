@@ -1,7 +1,7 @@
 package com.sd.stockmanagementsystem.application.port.input;
 
-import com.sd.stockmanagementsystem.application.dto.request.DeleteProductRequestDTO;
+import com.sd.stockmanagementsystem.application.dto.core.ProductKey;
 
 public interface DeleteProductUseCase {
-    void deleteProduct(long id);
+    void deleteProduct(ProductKey productKey);
 }

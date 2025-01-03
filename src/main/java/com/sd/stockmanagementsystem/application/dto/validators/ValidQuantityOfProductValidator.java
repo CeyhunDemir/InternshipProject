@@ -1,5 +1,6 @@
 package com.sd.stockmanagementsystem.application.dto.validators;
 
+import com.sd.stockmanagementsystem.application.dto.core.ProductKey;
 import com.sd.stockmanagementsystem.application.dto.valid.ValidQuantityOfProduct;
 import com.sd.stockmanagementsystem.domain.enumeration.ProductEnumeration;
 import com.sd.stockmanagementsystem.domain.model.Product;
@@ -19,7 +20,9 @@ public class ValidQuantityOfProductValidator implements ConstraintValidator<Vali
 
             var product_nameField = o.getClass().getDeclaredField("product_name");
             product_nameField.setAccessible(true);
-            Product product = productService.findProductByName((String) product_nameField.get(o));
+            ProductKey productKey = new ProductKey();
+            productKey.setName((String) product_nameField.get(o));
+            Product product = productService.findProductByProductKey(productKey);
 
             var quantityField = o.getClass().getDeclaredField("quantity");
             quantityField.setAccessible(true);

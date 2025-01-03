@@ -5,7 +5,7 @@ import "../styles/pages/allpage.css"
 import {useNavigate} from "react-router-dom";
 import TransactionsFilterMenu from "../components/TransactionsFilterMenu.tsx";
 
-export const AllProductsPage = () => {
+const AllProductsPage = () => {
 
     const axiosInstance = useAxios();
     const [products, setProducts] = useState<Product[]>([]);
@@ -33,15 +33,14 @@ export const AllProductsPage = () => {
 
     return (
         <>
-            <div className="container" style={{minWidth: "920px"}}>
+            <div className="container_header" style={{minWidth: "920px", justifyContent: "space-between"}}>
                 <div>
                     <h1 className="table_title">All Products</h1>
                 </div>
                 <div className="table_responsive">
                     <button className="table_add"
-                            onClick={()=>navigate("/addProduct")}>Add</button>
-                    <button className="table_search"
-                            onClick={()=>navigate("/searchProduct")}>Search</button>
+                            onClick={() => navigate("/addProduct")}>Add Product
+                    </button>
                 </div>
                 </div>
                 <div className = "table_table">
@@ -49,22 +48,25 @@ export const AllProductsPage = () => {
                     <table className="table">
                         <thead className="table_head">
                         <tr >
-                            <td className="cell">ID</td>
-                            <td className="cell">Name</td>
-                            <td className="cell">Quantity</td>
-                            <td className="cell">Unit Type</td>
-                            <td className="cell">Price</td>
-                            <td className="cell_edit"></td>
+                            <td className="cell_id">ID</td>
+                            <td className="cell_name">Name</td>
+                            <td className="cell_quantity">Quantity</td>
+                            <td className="cell_unitType">Unit Type</td>
+                            <td className="cell_price">Price</td>
+                            {/*                            <td className="cell_expirable">Expire</td>*/}
+                            <td className="cell_edit" style={{border: "0px"}}></td>
                         </tr>
                         </thead>
                         <tbody className="table_body">
-                            {products.map((product:any) => (<tr className="table_row" key={product.id}>
-                                <td className="cell">{product.id}</td>
-                                <td className="cell">{product.name}</td>
-                                <td className="cell">{product.quantity}</td>
-                                <td className="cell">{product.unitType}</td>
-                                <td className="cell">{product.price}</td>
-                                <td className="cell_edit">
+                        {products.map((product: Product) => (<tr className="table_row" key={product.id}>
+                            <td className="cell_id">{product.id}</td>
+                            <td className="cell_name">{product.name}</td>
+                            <td className="cell_quantity">{product.quantity}</td>
+                            <td className="cell_unitType">{product.unitType}</td>
+                            <td className="cell_price">{product.price}</td>
+                            {/*                                <td className="cell_expirable">{
+                                    (product.expirable === "EXPIRABLE") ? "YES" : "NO"}</td>*/}
+                            <td className="cell_edit" style={{border: "0px"}}>
                                     <button className="table_edit" onClick={()=>navigate(`/editProduct/${product.id}`)}>Edit</button>
                                 </td>
                             </tr>))}
@@ -75,3 +77,5 @@ export const AllProductsPage = () => {
         </>
     );
 };
+
+export default AllProductsPage;

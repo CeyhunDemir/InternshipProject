@@ -2,20 +2,22 @@ import "./App.css"
 import "./styles/theme.css"
 import {HashRouter, Routes, Route} from "react-router-dom";
 import {Login} from "./pages/LoginPage.tsx";
-import {AllProductsPage} from "./pages/AllProductsPage";
+import React, {lazy} from "react";
 import {Layout} from "./components/Layout.tsx";
-import React from "react";
 import ProtectedRoute from "./routes/ProtectedRoute.tsx";
 import {HomePage} from "./pages/Home.tsx";
-import {AddProductPage} from "./pages/AddProductPage.tsx";
-import {EditProductPage} from "./pages/EditProductPage.tsx";
-import {EditCustomerPage} from "./pages/EditCustomerPage.tsx";
-import {AddCustomerPage} from "./pages/AddCustomerPage.tsx";
-import {AllCustomersPage} from "./pages/AllCustomersPage.tsx";
-import {AllTransactionsPage} from "./pages/AllTransactionsPage.tsx";
-import {AddTransactionsPage} from "./pages/AddTransactionsPage.tsx";
-import {SearchProductPage} from "./pages/SearchProductPage.tsx";
+
+const AllProductsPage = lazy(() => import("./pages/AllProductsPage"));
+const AddProductPage = lazy(() => import("./pages/AddProductPage.tsx"));
+const EditProductPage = lazy(() => import("./pages/EditProductPage.tsx"));
+const EditCustomerPage = lazy(() => import("./pages/EditCustomerPage.tsx"));
+const AddCustomerPage = lazy(() => import("./pages/AddCustomerPage.tsx"));
+const AllCustomersPage = lazy(() => import("./pages/AllCustomersPage.tsx"));
+const AllTransactionsPage = lazy(() => import("./pages/AllTransactionsPage.tsx"));
+const AddTransactionsPage = lazy(() => import("./pages/AddTransactionsPage.tsx"));
+/*const SearchProductPage = lazy(() => import("./pages/SearchProductPage.tsx"));*/
 import { useParams } from 'react-router-dom';
+
 
 function App() {
 
@@ -46,12 +48,12 @@ function App() {
                             <EditProductPage/>
                         </ProtectedRoute>
                     }/>
-                    <Route path="/searchProduct"
+                    {/*<Route path="/searchProduct"
                            element={
                         <ProtectedRoute>
                             <SearchProductPage/>
                         </ProtectedRoute>
-                           }/>
+                           }/>*/}
                     <Route path="/customers"
                            element={
                         <ProtectedRoute>

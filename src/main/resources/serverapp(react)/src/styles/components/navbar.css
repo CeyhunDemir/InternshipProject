@@ -7,13 +7,14 @@
     border-radius: 0px 0px 20px 20px;
     color: white;
     width: 85%;
-    min-width: 730px;
+    min-width: 800px;
     top: 0px;
     left: 100px;
     right: 100px;
     box-sizing: border-box;
     position: fixed;
     z-index: 9999;
+    max-height: 200px;
 }
 .navbar-body{
 

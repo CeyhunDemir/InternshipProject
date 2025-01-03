@@ -26,7 +26,6 @@ public class AuthenticationController {
     }
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponseDTO> register(
             @Valid @RequestBody AuthenticationRequestDTO request

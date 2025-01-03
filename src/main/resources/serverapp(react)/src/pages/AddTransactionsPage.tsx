@@ -7,8 +7,8 @@ import CustomerNameInput from "../components/CustomerNameInput.tsx";
 import "../styles/pages/addpage.css"
 
 
-export const AddTransactionsPage =  () => {
-    const [productName, setProductName] = useState("");
+const AddTransactionsPage = () => {
+    const [productName, setProductName] = useState<string | null>("");
     const [customerName, setCustomerName] = useState("");
     const [quantity, setQuantity] = useState(0);
     const [transactionType, setTransactionType] = useState("SELL");
@@ -49,7 +49,7 @@ export const AddTransactionsPage =  () => {
             </div>
             <div className="container">
 
-                <ProductNameInput productName={productName} setProductName={setProductName} />
+                <ProductNameInput setProductName={setProductName}/>
 
                 <CustomerNameInput customerName={customerName} setCustomerName={setCustomerName} />
 
@@ -86,3 +86,4 @@ export const AddTransactionsPage =  () => {
         </div>
     )
 }
+export default AddTransactionsPage;
