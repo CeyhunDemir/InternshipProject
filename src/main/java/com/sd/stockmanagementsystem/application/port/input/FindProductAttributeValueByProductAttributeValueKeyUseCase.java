@@ -2,7 +2,8 @@ package com.sd.stockmanagementsystem.application.port.input;
 
 import com.sd.stockmanagementsystem.application.dto.core.ProductAttributeValueKey;
 import com.sd.stockmanagementsystem.domain.model.ProductAttributeValue;
+import jakarta.persistence.EntityNotFoundException;
 
 public interface FindProductAttributeValueByProductAttributeValueKeyUseCase {
-    ProductAttributeValue findProductAttributeValue(ProductAttributeValueKey productAttributeValueKey);
+    ProductAttributeValue findProductAttributeValueWithProductAttributeValueKey(ProductAttributeValueKey productAttributeValueKey) throws EntityNotFoundException;
 }

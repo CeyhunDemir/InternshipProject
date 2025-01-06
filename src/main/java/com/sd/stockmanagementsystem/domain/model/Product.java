@@ -1,12 +1,12 @@
 package com.sd.stockmanagementsystem.domain.model;
 
-import com.sd.stockmanagementsystem.domain.enumeration.ProductEnumeration;
 import com.sd.stockmanagementsystem.domain.enumeration.ProductEnumeration.UnitType;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.Instant;
 import java.util.List;
@@ -23,10 +23,13 @@ public class Product {
     @Column(name = "product_id", nullable = false, updatable = false)
     private long id;
 
-    @Column(name = "product_name", unique = false, nullable = false)
+    @Column(name = "product_name", unique = true, nullable = false)
     private String name;
 
-    @Column(name = "product_unitType", nullable = false)
+    @Column(name = "product_original_name", unique = false, nullable = true)
+    private String originalName;
+
+    @Column(name = "product_unit_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private UnitType unitType;
 

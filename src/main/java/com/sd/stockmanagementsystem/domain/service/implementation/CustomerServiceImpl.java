@@ -1,7 +1,6 @@
 package com.sd.stockmanagementsystem.domain.service.implementation;
 
 import com.sd.stockmanagementsystem.application.dto.core.CustomerKey;
-import com.sd.stockmanagementsystem.application.dto.core.ProductKey;
 import com.sd.stockmanagementsystem.application.dto.request.AddCustomerRequestDTO;
 import com.sd.stockmanagementsystem.application.dto.request.UpdateCustomerRequestDTO;
 import com.sd.stockmanagementsystem.application.dto.response.GetAllCustomersBySubstringResponseDTO;
@@ -56,27 +55,30 @@ public class CustomerServiceImpl implements ICustomerService {
 
     @Override
     public Customer findCustomerByCustomerKey(CustomerKey customerKey) {
+        if (customerKey == null) {
+            throw new EntityNotFoundException("Given Key is empty!");
+        }
         if (customerKey.getId() != null) {
             Optional<Customer> customer = customerRepository.findById(customerKey.getId());
             if (customer.isPresent()) {
                 return customer.get();
-            } else if (StringUtils.hasText(customerKey.getName())) {
-                Optional<Customer> customer2 = customerRepository.findByName(customerKey.getName());
-                if (customer2.isPresent()) {
-                    return customer2.get();
-                } else throw new EntityNotFoundException("Customer name not found with name: " + customerKey.getName());
-            } else throw new EntityNotFoundException("Customer id not found with id: " + customerKey.getId());
-        } else if (StringUtils.hasText(customerKey.getName())) {
+            }
+        }
+        if (StringUtils.hasText(customerKey.getName())) {
             Optional<Customer> customer = customerRepository.findByName(customerKey.getName());
             if (customer.isPresent()) {
                 return customer.get();
-            } else throw new EntityNotFoundException("Customer name not found with name: " + customerKey.getName());
+            }
         }
-
-        else{
-            throw new EntityNotFoundException("Given Key is empty!");
+        if (customerKey.getId() != null) {
+            throw new EntityNotFoundException("Customer id not found with id: " + customerKey.getId());
         }
+        if (StringUtils.hasText(customerKey.getName())) {
+            throw new EntityNotFoundException("Customer name not found with name: " + customerKey.getName());
+        }
+        throw new EntityNotFoundException("Customer is not found!");
     }
+
 
     @Override
     public List<GetAllCustomersResponseDTO> getAllCustomers() {

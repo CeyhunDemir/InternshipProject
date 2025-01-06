@@ -17,6 +17,6 @@ public class Attribute {
     @Column(name = "attribute_id", nullable = false, updatable = false)
     private long id;
 
-    @Column(name = "attribute_name", unique = true)
+    @Column(name = "attribute_attribute_name", unique = true)
     private String attributeName;
 }

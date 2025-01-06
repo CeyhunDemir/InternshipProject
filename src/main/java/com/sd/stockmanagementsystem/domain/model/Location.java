@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Table(name = "location")
 @Data
@@ -19,7 +17,7 @@ public class Location {
     @Column(name = "location_id", nullable = false, updatable = false)
     private long id;
 
-    @Column(name = "location_name")
+    @Column(name = "location_name", unique = true)
     private String name;
 
     @Column(name = "location_address")

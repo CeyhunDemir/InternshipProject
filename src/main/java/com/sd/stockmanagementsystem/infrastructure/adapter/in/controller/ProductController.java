@@ -3,12 +3,14 @@ package com.sd.stockmanagementsystem.infrastructure.adapter.in.controller;
 import com.sd.stockmanagementsystem.application.dto.core.ProductKey;
 import com.sd.stockmanagementsystem.application.dto.request.AddProductRequestDTO;
 import com.sd.stockmanagementsystem.application.dto.request.UpdateProductRequestDTO;
+import com.sd.stockmanagementsystem.application.dto.response.AddProductResponseDTO;
 import com.sd.stockmanagementsystem.application.dto.response.GetAllProductsBySubstringResponseDTO;
 import com.sd.stockmanagementsystem.application.dto.response.GetAllProductsResponseDTO;
 import com.sd.stockmanagementsystem.application.dto.response.GetProductByProductKeyResponseDTO;
 import com.sd.stockmanagementsystem.domain.service.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +24,8 @@ import java.util.List;
 public class ProductController {
     private final IProductService productService;
     @PostMapping
-    public void addProduct(@RequestBody @Valid AddProductRequestDTO addProductRequestDto) {
-        productService.addProduct(addProductRequestDto);
+    public ResponseEntity<AddProductResponseDTO> addProduct(@RequestBody @Valid AddProductRequestDTO addProductRequestDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productService.addProduct(addProductRequestDto));
     }
     @PutMapping()
     public void updateProduct(@RequestBody @Valid UpdateProductRequestDTO updateProductRequestDto) {

@@ -4,6 +4,7 @@ import com.sd.stockmanagementsystem.application.dto.request.AuthenticationReques
 import com.sd.stockmanagementsystem.application.dto.request.RegisterRequestDTO;
 import com.sd.stockmanagementsystem.application.dto.response.AuthenticationResponseDTO;
 import com.sd.stockmanagementsystem.domain.enumeration.UserEnumeration;
+import com.sd.stockmanagementsystem.domain.exception.AuthException;
 import com.sd.stockmanagementsystem.domain.model.User;
 import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -22,14 +23,17 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
 
-
-    public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO authenticationRequestDTO) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    authenticationRequestDTO.getEmail(),
-                    authenticationRequestDTO.getPassword()
-                )
-        );
+    public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO authenticationRequestDTO) throws AuthException {
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authenticationRequestDTO.getEmail(),
+                            authenticationRequestDTO.getPassword()
+                    )
+            );
+        } catch (Exception e) {
+            throw new AuthException("Invalid mail or password!"); // Custom exception with message
+        }
         var user = userRepository.findByEmail(authenticationRequestDTO.getEmail()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         return new AuthenticationResponseDTO(jwtToken);

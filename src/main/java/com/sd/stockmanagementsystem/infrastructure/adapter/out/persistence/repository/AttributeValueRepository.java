@@ -14,4 +14,9 @@ public interface AttributeValueRepository extends JpaRepository<AttributeValue, 
     Optional<AttributeValue> findByAttribute_IdAndValue_Id(Long attributeId, Long valueId);
 
     Optional<AttributeValue> findByAttribute_AttributeNameAndValue_Value(String attributeName, String value);
+
+    /*List<AttributeValue> findByAttributeValue_AttributeNameAndValue_ValueIn(Set<String> attributeName, Set<String> value);
+
+    @Query("SELECT a FROM AttributeValue a WHERE :attributeKeyValue")
+    Optional<AttributeValue> findByAttributeKeyValue(@Param("attributeKeyValue") AttributeKeyValue attributeKeyValue);*/
 }

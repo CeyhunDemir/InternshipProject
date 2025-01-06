@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-public class DateConverter {
+public abstract class DateConverter {
     public static Instant convertStringToInstant(String date) {
         LocalDate localDate = LocalDate.parse(date);
         LocalDateTime localDateTime = localDate.atStartOfDay();

@@ -3,6 +3,11 @@ import useAxios from "../interceptors/AxiosInstance.tsx";
 import "../styles/pages/addpage.css"
 import Popup from 'reactjs-popup';
 
+interface AttributeObject {
+    attributeName: string;
+    value: string;
+}
+
 const AddProductPage = () => {
     const [name, setName] = useState("");
     /*    const [quantity, setQuantity] = useState(0);*/
@@ -28,27 +33,39 @@ const AddProductPage = () => {
     }
 
     const preparePayload = () => {
-        const attributesObject: { [key: string]: string } = {};
-
+        let attributesObject: AttributeObject[] = [];
         attributes.forEach((attr, index) => {
-            attributesObject[attributes[index]] = attributeValues[index];
+            if (attr !== "" && attributeValues[index] !== "") {
+                const temp: AttributeObject = {
+                    attributeName: attributes[index],
+                    value: attributeValues[index],
+                }
+                attributesObject.push(temp);
+            }
         });
 
-        const payload = {
+        return attributesObject
+    };
+
+    const handleSubmit = async () => {
+        const attributes = preparePayload();
+        const response = await axiosInstance.post("/v1/product", {
             name: name,
             unitType: unitType,
             price: price,
-            attributes: attributesObject,
-        }
-
-        return payload;
-    };
-
-    const handleSubmit = async() => {
-        const payload = preparePayload();
-        const response = await axiosInstance.post("/v1/product", payload);
-        if (response.status === 200) {
+        });
+        if (response.status === 201) {
             setSuccess(true);
+            const id: number = response.data.id
+            const attributeResponse = await axiosInstance.post("/v1/attribute", {
+                productId: id,
+                attributes: attributes,
+            });
+            if (attributeResponse.status === 201) {
+                setSuccess(true);
+            }
+        } else {
+
         }
     }
     return(

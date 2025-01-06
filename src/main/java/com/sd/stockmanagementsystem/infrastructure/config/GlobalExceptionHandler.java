@@ -1,15 +1,16 @@
 package com.sd.stockmanagementsystem.infrastructure.config;
 
-import jakarta.persistence.EntityNotFoundException;
+import com.sd.stockmanagementsystem.domain.exception.AuthException;
+import org.postgresql.util.PSQLException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.postgresql.util.PSQLException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,5 +42,10 @@ public class GlobalExceptionHandler {
         String extractedMessage = message.substring(message.indexOf("ERROR:"), message.indexOf("Detail:") - 2);
         errorsMap.put("message", extractedMessage);
         return new ResponseEntity<>(errorsMap, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<String> handleAuthenticationException(AuthenticationException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
     }
 }

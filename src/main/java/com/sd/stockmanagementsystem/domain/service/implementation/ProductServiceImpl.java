@@ -1,36 +1,30 @@
 package com.sd.stockmanagementsystem.domain.service.implementation;
 
-import ch.qos.logback.core.util.StringUtil;
-import com.sd.stockmanagementsystem.application.dto.core.*;
+import com.sd.stockmanagementsystem.application.dto.core.ProductKey;
 import com.sd.stockmanagementsystem.application.dto.request.AddProductRequestDTO;
 import com.sd.stockmanagementsystem.application.dto.request.UpdateProductQuantityRequestDTO;
 import com.sd.stockmanagementsystem.application.dto.request.UpdateProductRequestDTO;
+import com.sd.stockmanagementsystem.application.dto.response.AddProductResponseDTO;
 import com.sd.stockmanagementsystem.application.dto.response.GetAllProductsBySubstringResponseDTO;
 import com.sd.stockmanagementsystem.application.dto.response.GetAllProductsResponseDTO;
 import com.sd.stockmanagementsystem.application.dto.response.GetProductByProductKeyResponseDTO;
 import com.sd.stockmanagementsystem.domain.enumeration.TransactionEnumeration;
 import com.sd.stockmanagementsystem.domain.model.Product;
-import com.sd.stockmanagementsystem.domain.model.ProductAttributeValue;
-import com.sd.stockmanagementsystem.domain.service.IProductAttributeValueService;
 import com.sd.stockmanagementsystem.domain.service.IProductService;
+import com.sd.stockmanagementsystem.domain.util.StringConverter;
 import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.mapper.IGeneralMapperService;
 import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.mapper.ProductMapper;
-import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.repository.ProductAttributeValueRepository;
 import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.repository.ProductRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-
-import static com.sd.stockmanagementsystem.domain.model.Transaction_.transactionType;
 
 @Service
 @AllArgsConstructor
@@ -41,19 +35,23 @@ public class ProductServiceImpl implements IProductService{
 
 
     @Override
-    @Transactional
-    public void addProduct(AddProductRequestDTO addProductRequestDto) {
+    public AddProductResponseDTO addProduct(AddProductRequestDTO addProductRequestDto) {
         Product product = productMapperService.forRequest().map(addProductRequestDto, Product.class);
+        product.setEnabled(true);
+        product.setOriginalName(addProductRequestDto.getName());
+        product.setName(StringConverter.formatName(product.getName()));
         product.setQuantity(0);
         productRepository.save(product);
+        productRepository.flush();
+        return AddProductResponseDTO.builder().id(product.getId()).build();
     }
 
     @Override
     @Transactional
     public void updateProduct(UpdateProductRequestDTO updateProductRequestDTO) throws EntityNotFoundException {
-        Product product = productMapperService.forRequest().map(updateProductRequestDTO, Product.class);
+        Product product = findProductByProductKey(ProductKey.builder().id(updateProductRequestDTO.getId()).name(updateProductRequestDTO.getName()).build());
         productMapper.updateProductFromDTO(updateProductRequestDTO, product);
-        product.setUpdatedAt(Instant.now());
+        /*product.setUpdatedAt(Instant.now());*/
         productRepository.save(product);
 
     }
@@ -114,23 +112,27 @@ public class ProductServiceImpl implements IProductService{
 
     @Override
     public Product findProductByProductKey(ProductKey productKey) {
+        if (productKey == null) {
+            throw new EntityNotFoundException("Given Key is empty!");
+        }
         if (productKey.getId() != null) {
             Optional<Product> product = productRepository.findById(productKey.getId());
             if (product.isPresent()) {
                 return product.get();
-            } else if (StringUtils.hasText(productKey.getName())) {
-                Optional<Product> product2 = productRepository.findByName(productKey.getName());
-                if (product2.isPresent()) {
-                    return product2.get();
-                } else throw new EntityNotFoundException("Product name not found with name: " + productKey.getName());
-            } else throw new EntityNotFoundException("Product id not found with id: " + productKey.getId());
-        } else if (StringUtils.hasText(productKey.getName())) {
+            }
+        }
+        if (StringUtils.hasText(productKey.getName())) {
             Optional<Product> product = productRepository.findByName(productKey.getName());
             if (product.isPresent()) {
                 return product.get();
-            } else throw new EntityNotFoundException("Product name not found with name: " + productKey.getName());
-        } else {
-            throw new EntityNotFoundException("Given Key is empty!");
+            }
         }
+        if (productKey.getName() != null) {
+            throw new EntityNotFoundException("No product exists with the given name: " + productKey.getName());
+        }
+        if (productKey.getId() != null) {
+            throw new EntityNotFoundException("No product exists with the given id: " + productKey.getId());
+        }
+        throw new EntityNotFoundException("Product not found.");
     }
 }
