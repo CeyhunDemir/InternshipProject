@@ -1,7 +1,7 @@
 package com.sd.stockmanagementsystem.infrastructure.adapter.in.controller;
 
 
-import com.sd.stockmanagementsystem.application.dto.request.AddTransactionByProductNameRequestDTO;
+import com.sd.stockmanagementsystem.application.dto.request.AddTransactionRequestDTO;
 import com.sd.stockmanagementsystem.application.dto.request.TransactionFilterDTO;
 import com.sd.stockmanagementsystem.application.dto.response.GetAllTransactionsResponseDTO;
 import com.sd.stockmanagementsystem.domain.service.ITransactionService;
@@ -21,8 +21,8 @@ public class TransactionController {
     private final ITransactionService transactionService;
 
     @PostMapping
-    public void addTransaction(@RequestBody @Valid AddTransactionByProductNameRequestDTO addTransactionByProductNameRequestDTO) {
-        transactionService.addTransactionByProductName(addTransactionByProductNameRequestDTO);
+    public void addTransaction(@RequestBody @Valid AddTransactionRequestDTO addTransactionRequestDTO) {
+        transactionService.addTransaction(addTransactionRequestDTO);
     }
     @GetMapping("/all")
     public ResponseEntity<List<GetAllTransactionsResponseDTO>> getAllTransactions() {

@@ -1,5 +1,6 @@
 package com.sd.stockmanagementsystem.application.dto.request;
 
+import com.sd.stockmanagementsystem.application.dto.valid.ValidNumberOfFields;
 import com.sd.stockmanagementsystem.domain.enumeration.TransactionEnumeration;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -13,11 +14,26 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ValidNumberOfFields(fields = {"barcode", "product_name"})
 public class AddTransactionRequestDTO {
 
-    protected String customer_name;
+    private String customer_name;
 
     @NotNull
     @PositiveOrZero
-    protected double totalPrice;
+    private double totalPrice;
+
+    private String barcode;
+
+    private String product_name;
+
+    @NotNull
+    private String locationName;
+
+    @NotNull
+    @Positive
+    private double quantity;
+
+    @NotNull
+    private TransactionEnumeration.TransactionType transactionType;
 }

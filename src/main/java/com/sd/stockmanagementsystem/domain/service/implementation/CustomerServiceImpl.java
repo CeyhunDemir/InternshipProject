@@ -55,6 +55,8 @@ public class CustomerServiceImpl implements ICustomerService {
 
     @Override
     public Customer findCustomerByCustomerKey(CustomerKey customerKey) {
+        /*        return GenericServiceFuntions.findByKey(customerKey, customerRepository, Customer.class);*/
+
         if (customerKey == null) {
             throw new EntityNotFoundException("Given Key is empty!");
         }

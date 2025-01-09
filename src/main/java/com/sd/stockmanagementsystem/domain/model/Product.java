@@ -39,7 +39,7 @@ public class Product {
     @Column(name = "product_price")
     private double price;
 
-    @Column(name = "product_barcode", unique = true, nullable = true)
+    @Column(name = "product_barcode", unique = true, nullable = false)
     private String barcode;
 
     @Column(name = "product_enabled")
@@ -54,6 +54,6 @@ public class Product {
     private Instant updatedAt;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = false)
-    private List<Transaction> transactions;
+    private List<Stock> Stocks;
 
 }

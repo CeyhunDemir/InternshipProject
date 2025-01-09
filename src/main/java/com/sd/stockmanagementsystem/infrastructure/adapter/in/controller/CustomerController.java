@@ -41,7 +41,7 @@ public class CustomerController {
     }
 
     @GetMapping("/find")
-    public ResponseEntity<GetCustomerByCustomerKeyResponseDTO> findProductById(@ModelAttribute CustomerKey customerKey) {
+    public ResponseEntity<GetCustomerByCustomerKeyResponseDTO> findCustomerById(@ModelAttribute CustomerKey customerKey) {
         return ResponseEntity.ok(customerService.getCustomerByCustomerKey(customerKey));
     }
     @GetMapping("/search")

@@ -22,9 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -121,6 +120,12 @@ public class ProductServiceImpl implements IProductService{
                 return product.get();
             }
         }
+        if (StringUtils.hasText(productKey.getBarcode())) {
+            Optional<Product> product = productRepository.findByBarcode(productKey.getBarcode());
+            if (product.isPresent()) {
+                return product.get();
+            }
+        }
         if (StringUtils.hasText(productKey.getName())) {
             Optional<Product> product = productRepository.findByName(productKey.getName());
             if (product.isPresent()) {
@@ -130,9 +135,40 @@ public class ProductServiceImpl implements IProductService{
         if (productKey.getName() != null) {
             throw new EntityNotFoundException("No product exists with the given name: " + productKey.getName());
         }
+        if (productKey.getBarcode() != null) {
+            throw new EntityNotFoundException("No product exists with the given barcode: " + productKey.getBarcode());
+        }
         if (productKey.getId() != null) {
             throw new EntityNotFoundException("No product exists with the given id: " + productKey.getId());
         }
         throw new EntityNotFoundException("Product not found.");
+    }
+
+    @Override
+    public Map<String, Product> findProductsByBarcodes(Set<String> barcodes) {
+        if (barcodes == null || barcodes.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        // Query the repository for all matching barcodes
+        List<Product> products = productRepository.findAllByBarcodeIn(barcodes);
+
+        // Map the results by barcode
+        return products.stream()
+                .collect(Collectors.toMap(Product::getBarcode, product -> product));
+    }
+
+    @Override
+    public Map<String, Product> findProductsByNames(Set<String> names) {
+        if (names == null || names.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        // Query the repository for all matching barcodes
+        List<Product> products = productRepository.findAllByNameIn(names);
+
+        // Map the results by barcode
+        return products.stream()
+                .collect(Collectors.toMap(Product::getName, product -> product));
     }
 }

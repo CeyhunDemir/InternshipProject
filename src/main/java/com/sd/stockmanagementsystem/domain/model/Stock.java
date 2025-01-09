@@ -17,11 +17,11 @@ public class Stock {
     @Column(name = "stock_id", nullable = false, updatable = false)
     private long id;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @OneToOne()
+    @OneToOne
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 

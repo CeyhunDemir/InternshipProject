@@ -1,5 +1,4 @@
 import {useState} from "react";
-import axios from "axios";
 import useAxios from "../interceptors/AxiosInstance.tsx";
 import Popup from "reactjs-popup";
 import ProductNameInput from "../components/ProductNameInput.tsx";
@@ -25,7 +24,7 @@ const AddTransactionsPage = () => {
 
     return (
         <div className="addProductPage">
-            <h1>Add Product</h1>
+            <h1>Add Transaction</h1>
             <div className="titles">
                 <h1 style={{fontSize: "15px", marginRight: "90px", marginLeft: "5px"}}>
                     Product Name

@@ -1,18 +1,20 @@
 package com.sd.stockmanagementsystem.application.dto.request;
 
 
-import com.sd.stockmanagementsystem.application.dto.valid.ValidUniqueEmail;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ValidUniqueEmail(message = "You can not register with this credentials.")
+/*@ValidUniqueEmail(message = "You can not register with this credentials.")*/
 public class RegisterRequestDTO {
     @NotNull(message = "First name can not be null.")
     @NotBlank(message = "First name can not be blank.")

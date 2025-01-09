@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 
 @Entity
@@ -25,13 +24,21 @@ public class Transaction {
     @Column(name = "transaction_id", nullable = false, updatable = false)
     private long id;
 
-    @ManyToOne
+/*    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    private Product product;*/
 
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = true)
     private Customer customer;
+
+/*    @ManyToOne
+    @JoinColumn(name = "location_id", nullable = false)
+    private Location location;*/
+
+    @ManyToOne
+    @JoinColumn(name = "stock_id", nullable = false)
+    private Stock stock;
 
     @Column(name = "transaction_transaction_date")
     @CreationTimestamp

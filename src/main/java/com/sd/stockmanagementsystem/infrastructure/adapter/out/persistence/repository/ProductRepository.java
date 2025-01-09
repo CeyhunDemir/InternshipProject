@@ -8,12 +8,19 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface ProductRepository extends JpaRepository<Product, Long>, ProductRepositoryPort {
 
     Optional<Product> findById(long id);
 
     Optional<Product> findByName(String name);
+
+    Optional<Product> findByBarcode(String barcode);
+
+    List<Product> findAllByBarcodeIn(Set<String> barcodes);
+
+    List<Product> findAllByNameIn(Set<String> names);
 
     List<Product> findAll();
 
