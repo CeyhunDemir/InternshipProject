@@ -3,11 +3,22 @@ package com.sd.stockmanagementsystem.domain.service.implementation;
 import com.sd.stockmanagementsystem.application.dto.core.LocationKey;
 import com.sd.stockmanagementsystem.application.dto.core.ProductKey;
 import com.sd.stockmanagementsystem.application.dto.core.StockKey;
+import com.sd.stockmanagementsystem.application.dto.request.AddStockRequestDTO;
+import com.sd.stockmanagementsystem.application.dto.request.MoveMultipleProductsInStockRequestDTO;
+import com.sd.stockmanagementsystem.application.dto.request.MoveProductInStockRequestDTO;
+import com.sd.stockmanagementsystem.domain.model.Location;
+import com.sd.stockmanagementsystem.domain.model.Product;
 import com.sd.stockmanagementsystem.domain.model.Stock;
+import com.sd.stockmanagementsystem.domain.service.ILocationService;
+import com.sd.stockmanagementsystem.domain.service.IProductService;
 import com.sd.stockmanagementsystem.domain.service.IStockService;
 import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.repository.StockRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.LockModeType;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.modelmapper.internal.Pair;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -17,6 +28,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class StockServiceImpl implements IStockService {
     private final StockRepository stockRepository;
+    private final IProductService productService;
+    private final ILocationService locationService;
+    private final EntityManager entityManager;
 
     @Override
     public Double findQuantityInStockByStockKey(StockKey stockKey) {
@@ -74,5 +88,247 @@ public class StockServiceImpl implements IStockService {
                 ,
                 entry -> entry
         ));
+    }
+
+    @Override
+    public Stock findStockByIdForUpdate(long id) {
+        Optional<Stock> stock = stockRepository.findByIdForUpdate(id);
+        if (stock.isPresent()) {
+            return stock.get();
+        }
+        throw new EntityNotFoundException("No Stock found with id: " + id);
+    }
+
+    @Override
+    @Transactional
+    public void updateStockQuantityInBulk(Map<Long, Double> stockQuantityMap) {
+        // Step 1: Select rows with a pessimistic lock
+        List<Long> ids = new ArrayList<>(stockQuantityMap.keySet());
+        entityManager.createQuery("SELECT s FROM Stock s WHERE s.id IN (:ids)")
+                .setParameter("ids", ids)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE) // Lock rows for update
+                .getResultList();
+
+        // Step 2: Perform the update
+        StringBuilder query = new StringBuilder("UPDATE Stock s SET s.quantity = CASE ");
+
+        for (Map.Entry<Long, Double> entry : stockQuantityMap.entrySet()) {
+            query.append("WHEN s.id = ")
+                    .append(entry.getKey())
+                    .append(" THEN s.quantity + ")
+                    .append(entry.getValue())
+                    .append(" ");
+        }
+
+        query.append("END WHERE s.id IN (:ids)");
+
+        entityManager.createQuery(query.toString())
+                .setParameter("ids", ids)
+                .executeUpdate();
+    }
+
+    @Override
+    public Stock addStock(AddStockRequestDTO addStockRequestDTO) {
+        if (addStockRequestDTO.getProduct() != null && addStockRequestDTO.getLocation() != null) {
+            Stock stock = new Stock();
+            stock.setProduct(addStockRequestDTO.getProduct());
+            stock.setLocation(addStockRequestDTO.getLocation());
+            stock.setQuantity(0);
+            stockRepository.save(stock);
+            return stock;
+        } else if ((addStockRequestDTO.getProductName() != null || addStockRequestDTO.getBarcode() != null) && addStockRequestDTO.getLocationName() != null) {
+            Stock stock = new Stock();
+            stock.setProduct(productService.findProductByProductKey(ProductKey.builder().name(addStockRequestDTO.getProductName()).barcode(addStockRequestDTO.getBarcode()).build()));
+            stock.setLocation(locationService.findByLocationKey(LocationKey.builder().name(addStockRequestDTO.getLocationName()).build()));
+            stock.setQuantity(0);
+            stockRepository.save(stock);
+            return stock;
+        } else {
+            throw new EntityNotFoundException("bla bla");
+        }
+    }
+
+    @Override
+    public void MoveProductInStock(MoveProductInStockRequestDTO moveProductInStockRequestDTO) {
+
+
+    }
+
+    @Override
+    @Transactional
+    public void moveMultipleProductsInStock(MoveMultipleProductsInStockRequestDTO moveMultipleProductsInStockRequestDTO) {
+        List<MoveProductInStockRequestDTO> moveProductInStockRequestDTOS = moveMultipleProductsInStockRequestDTO.getMoveRequests();
+
+        //Re arranging the requests so that if a specific stock is being sent to the same place in different requests it sums their quantities and makes it only one request
+        List<MoveProductInStockRequestDTO> uniqueMoveProductInStockRequestDTOS = moveProductInStockRequestDTOS.stream()
+                .collect(Collectors.toMap(
+                        dto -> dto.getStockId() + "|" + dto.getDestinationId(),
+                        dto -> dto,
+                        (dto1, dto2) -> {
+                            dto1.setQuantity(dto1.getQuantity() + dto2.getQuantity());
+                            return dto1;
+                        }
+                ))
+                .values()
+                .stream().toList();
+
+        Map<Long, MoveProductInStockRequestDTO> moveProductInStockRequestDTOSGroupedByOrigin = moveProductInStockRequestDTOS.stream()
+                .collect(Collectors.toMap(
+                        dto -> dto.getStockId(),
+                        dto -> dto,
+                        (dto1, dto2) -> {
+                            dto1.setQuantity(dto1.getQuantity() + dto2.getQuantity());
+                            return dto1;
+                        }
+                ))
+                .values()
+                .stream()
+                .collect(Collectors.toMap(
+                        dto -> dto.getStockId(),
+                        dto -> dto
+                ));
+
+
+        //Forming the request map for eliminating further for loops, separating stock id list to use as an input
+        Map<Long, MoveProductInStockRequestDTO> moveProductRequests = new HashMap<>();
+        List<Long> ids = new ArrayList<>();
+        List<Long> destinationIds = new ArrayList<>();
+
+        uniqueMoveProductInStockRequestDTOS.forEach(moveProductInStockRequestDTO -> {
+            if (moveProductInStockRequestDTO.getStockId() != null) {
+                ids.add(moveProductInStockRequestDTO.getStockId());
+            }
+            if (moveProductInStockRequestDTO.getDestinationId() != null) {
+                destinationIds.add(moveProductInStockRequestDTO.getDestinationId());
+            }
+            moveProductRequests.put(moveProductInStockRequestDTO.getStockId(), moveProductInStockRequestDTO);
+        });
+
+        //Creating the origin stock map for later use
+        List<Stock> originStocks = stockRepository.findByIdIn(ids);
+        Map<Long, Stock> idOriginStockMap = originStocks.stream().collect(Collectors.toMap(
+                stock -> {
+                    if (stock.getQuantity() < moveProductInStockRequestDTOSGroupedByOrigin.get(stock.getId()).getQuantity()) {
+                        throw new IllegalArgumentException("");
+                    } else return stock.getId();
+                },
+                stock -> stock
+        ));
+
+        //Forming a set of pairs that lists all the destinations needed before the transfer operation.
+        Map<Pair<Long, Long>, MoveProductInStockRequestDTO> possibleDestinations = uniqueMoveProductInStockRequestDTOS.stream()
+                .collect(Collectors.toMap(
+                        entry -> Pair.of(idOriginStockMap.get(entry.getStockId()).getProduct().getId(), entry.getDestinationId()),
+                        entry -> entry
+                ));
+
+        //Finding and listing the destinations that does not exist yet.
+        Set<Pair<Long, Long>> missingDestinations = new HashSet<>();
+        StringBuilder query = new StringBuilder("SELECT " +
+                "CASE ");
+        for (Pair<Long, Long> possibleDestination : possibleDestinations.keySet()) {
+            query.append("WHEN s.product.id = ")
+                    .append(possibleDestination.getLeft())
+                    .append(" AND s.location.id = ")
+                    .append(possibleDestination.getRight())
+                    .append(" THEN ")
+                    .append("1 "); // Return 1 when found
+        }
+        query.append(" ELSE 0 END, s.product.id, s.location.id FROM Stock s WHERE ");
+        for (Pair<Long, Long> possibleDestination : possibleDestinations.keySet()) {
+            query.append(" (s.product.id = ")
+                    .append(possibleDestination.getLeft())
+                    .append(" AND s.location.id = ")
+                    .append(possibleDestination.getRight())
+                    .append(") OR ");
+        }
+        query.delete(query.length() - 4, query.length());
+
+        List<Object[]> results = entityManager.createQuery(query.toString()).getResultList();
+
+        for (Object[] result : results) {
+            Integer matchFlag = (Integer) result[0]; // This stores whether a match was found (1) or not (0)
+            Long productId = (Long) result[1]; // Product ID
+            Long locationId = (Long) result[2]; // Location ID
+
+            // Use the pair as desired
+            Pair<Long, Long> searchedPair = Pair.of(productId, locationId);
+            if (matchFlag == 0) {
+                missingDestinations.add(searchedPair);
+            }
+        }
+
+        //Get the location and product entities in bulk to create new stocks.
+        Set<Long> productIds = new HashSet<>();
+        Set<Long> locationIds = new HashSet<>();
+
+        missingDestinations.forEach(entry -> {
+            productIds.add(entry.getLeft());
+            locationIds.add(entry.getRight());
+        });
+
+        Map<Long, Product> products = productService.findProductsByIds(productIds);
+        Map<Long, Location> locations = locationService.findLocationsByIds(locationIds);
+
+        //Creating the new stocks list then saving them to the stocks
+        List<Stock> newStocks = missingDestinations.stream()
+                .map(entry -> {
+                    Product product = products.get(entry.getLeft());
+                    Location location = locations.get(entry.getRight());
+                    Stock stock = new Stock();
+                    stock.setProduct(product);
+                    stock.setLocation(location);
+                    stock.setQuantity(0.0);
+                    return stock;
+                })
+                .collect(Collectors.toList());
+        stockRepository.saveAll(newStocks);
+
+        //Selecting all the origin and destination stock entries and LOCKING them.
+        entityManager.createQuery(
+                        "SELECT s FROM Stock s WHERE s.id IN (:ids) " +
+                                "OR (s.product.id IN :productIds AND s.location.id IN (:locationIds))",
+                        Stock.class)
+                .setParameter("ids", ids)
+                .setParameter("locationIds", destinationIds)
+                .setParameter("productIds", possibleDestinations.keySet().stream().map(Pair::getLeft).collect(Collectors.toSet()))
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE); // Lock rows for update
+
+
+        //Updating destination stocks
+        StringBuilder updateQuery = new StringBuilder("UPDATE Stock s SET s.quantity = CASE ");
+
+        for (Pair<Long, Long> destination : possibleDestinations.keySet()) {
+            updateQuery.append("WHEN s.product.id = ")
+                    .append(destination.getLeft())
+                    .append(" AND s.location.id = ")
+                    .append(destination.getRight())
+                    .append(" THEN s.quantity + ")
+                    .append(possibleDestinations.get(destination).getQuantity())
+                    .append(" ");
+        }
+        updateQuery.append("END WHERE s.product.id IN (:productIds) AND s.location.id IN (:locationIds)");
+
+        entityManager.createQuery(updateQuery.toString())
+                .setParameter("productIds", possibleDestinations.keySet().stream().map(Pair::getLeft).collect(Collectors.toSet()))
+                .setParameter("locationIds", possibleDestinations.keySet().stream().map(Pair::getRight).collect(Collectors.toSet()))
+                .executeUpdate();
+
+        //Updating origin stocks
+
+        StringBuilder updateQuery2 = new StringBuilder("Update Stock s SET s.quantity = CASE");
+
+        for (Stock stock : originStocks) {
+            updateQuery2.append("WHEN s.id = ")
+                    .append(stock.getId())
+                    .append(" THEN s.quantity - ")
+                    .append(moveProductRequests.get(stock.getId()))
+                    .append(" ");
+        }
+        updateQuery2.append("END WHERE s.id IN (:ids)");
+
+        entityManager.createQuery(updateQuery2.toString())
+                .setParameter("ids", ids)
+                .executeUpdate();
     }
 }

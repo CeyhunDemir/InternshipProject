@@ -11,6 +11,6 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddMultipleTransactionsRequestDTO {
-    List<AddTransactionRequestDTO> transactions;
+public class MoveMultipleProductsInStockRequestDTO {
+    List<MoveProductInStockRequestDTO> moveRequests;
 }

@@ -1,11 +1,14 @@
 package com.sd.stockmanagementsystem.domain.service;
 
-import com.sd.stockmanagementsystem.application.port.input.FindQuantityInStockByStockKeyUseCase;
-import com.sd.stockmanagementsystem.application.port.input.FindStockByStockKeyUseCase;
-import com.sd.stockmanagementsystem.application.port.input.FindStocksByStockKeysUseCase;
+import com.sd.stockmanagementsystem.application.port.input.*;
 
 public interface IStockService extends
+        AddStockUseCase,
         FindQuantityInStockByStockKeyUseCase,
         FindStockByStockKeyUseCase,
-        FindStocksByStockKeysUseCase {
+        FindStockByIdForUpdateUseCase,
+        FindStocksByStockKeysUseCase,
+        UpdateStockQuantityInBulkUseCase,
+        MoveProductInStockUseCase,
+        MoveMultipleProductsInStockUseCase {
 }

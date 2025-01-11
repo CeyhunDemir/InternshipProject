@@ -1,8 +1,10 @@
 package com.sd.stockmanagementsystem.domain.service.implementation;
 
 import com.sd.stockmanagementsystem.application.dto.core.LocationKey;
+import com.sd.stockmanagementsystem.application.dto.request.AddLocationRequestDTO;
 import com.sd.stockmanagementsystem.domain.model.Location;
 import com.sd.stockmanagementsystem.domain.service.ILocationService;
+import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.mapper.IGeneralMapperService;
 import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.repository.LocationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class LocationServiceImpl implements ILocationService {
     private final LocationRepository locationRepository;
+    private final IGeneralMapperService locationMapperService;
 
     @Override
     public Location findByLocationKey(LocationKey locationKey) {
@@ -51,5 +54,21 @@ public class LocationServiceImpl implements ILocationService {
         List<Location> locations = locationRepository.findByNameIn(names);
         return locations.stream()
                 .collect(Collectors.toMap(Location::getName, location -> location));
+    }
+
+    @Override
+    public void addLocation(AddLocationRequestDTO addLocationRequestDTO) {
+        Location location = locationMapperService.forRequest().map(addLocationRequestDTO, Location.class);
+        locationRepository.save(location);
+    }
+
+    @Override
+    public Map<Long, Location> findLocationsByIds(Set<Long> ids) {
+        if (ids == null) {
+            Collections.emptyMap();
+        }
+        List<Location> locations = locationRepository.findByIdIn(ids);
+
+        return locations.stream().collect(Collectors.toMap(entry -> entry.getId(), entry -> entry));
     }
 }

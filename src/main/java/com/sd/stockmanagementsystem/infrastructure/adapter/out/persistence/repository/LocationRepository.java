@@ -14,4 +14,6 @@ public interface LocationRepository extends JpaRepository<Location, Long>, Locat
     Optional<Location> findByName(String name);
 
     List<Location> findByNameIn(Set<String> names);
+
+    List<Location> findByIdIn(Set<Long> ids);
 }

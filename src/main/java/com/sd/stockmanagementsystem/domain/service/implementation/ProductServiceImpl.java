@@ -15,7 +15,9 @@ import com.sd.stockmanagementsystem.domain.util.StringConverter;
 import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.mapper.IGeneralMapperService;
 import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.mapper.ProductMapper;
 import com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.repository.ProductRepository;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.LockModeType;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,7 @@ public class ProductServiceImpl implements IProductService{
     private final ProductRepository productRepository;
     private final IGeneralMapperService productMapperService;
     private final ProductMapper productMapper;
+    private final EntityManager entityManager;
 
 
     @Override
@@ -170,5 +173,50 @@ public class ProductServiceImpl implements IProductService{
         // Map the results by barcode
         return products.stream()
                 .collect(Collectors.toMap(Product::getName, product -> product));
+    }
+
+    @Override
+    public Product findProductByIdForUpdate(Long id) {
+        Optional<Product> product = productRepository.findByIdForUpdate(id);
+        if (product.isPresent()) {
+            return product.get();
+        } else throw new EntityNotFoundException("No product exists with the given id: " + id);
+    }
+
+    @Override
+    @Transactional
+    public void updateProductQuantityInBulk(Map<Long, Double> productQuantityMap) {
+        List<Long> ids = new ArrayList<>(productQuantityMap.keySet());
+        entityManager.createQuery("SELECT p FROM Product p WHERE p.id IN (:ids)")
+                .setParameter("ids", ids)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE) // Lock rows for update
+                .getResultList();
+
+
+        StringBuilder query = new StringBuilder("UPDATE Product p SET p.quantity = CASE ");
+
+        for (Map.Entry<Long, Double> entry : productQuantityMap.entrySet()) {
+            query.append("WHEN p.id = ")
+                    .append(entry.getKey())
+                    .append(" THEN p.quantity + ")
+                    .append(entry.getValue())
+                    .append(" ");
+        }
+
+        query.append("END WHERE p.id IN (:ids)");
+
+        entityManager.createQuery(query.toString())
+                .setParameter("ids", ids)
+                .executeUpdate();
+    }
+
+    @Override
+    public Map<Long, Product> findProductsByIds(Set<Long> ids) {
+        if (ids == null) {
+            return Collections.emptyMap();
+        }
+        List<Product> products = productRepository.findAllByIdIn(ids);
+
+        return products.stream().collect(Collectors.toMap(entry -> entry.getId(), entry -> entry));
     }
 }

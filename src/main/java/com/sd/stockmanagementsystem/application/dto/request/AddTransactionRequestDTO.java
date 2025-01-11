@@ -4,7 +4,6 @@ import com.sd.stockmanagementsystem.application.dto.valid.ValidNumberOfFields;
 import com.sd.stockmanagementsystem.domain.enumeration.TransactionEnumeration;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,10 +17,6 @@ import lombok.NoArgsConstructor;
 public class AddTransactionRequestDTO {
 
     private String customer_name;
-
-    @NotNull
-    @PositiveOrZero
-    private double totalPrice;
 
     private String barcode;
 

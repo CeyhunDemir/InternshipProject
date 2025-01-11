@@ -6,11 +6,14 @@ public interface IProductService extends AddProductUseCase,
         UpdateProductUseCase,
         DeleteProductUseCase,
         FindProductByProductKeyUseCase,
+        FindProductByIdForUpdateUseCase,
         FindProductsByBarcodesUseCase,
         FindProductsByNamesUseCase,
         UpdateProductQuantityUseCase,
+        UpdateProductQuantityInBulkUseCase,
         GetAllProductsUseCase,
         GetProductByProductKeyUseCase,
-        GetAllProductsBySubstringUseCase{
+        GetAllProductsBySubstringUseCase,
+        FindProductsByIdsUseCase {
 
 }

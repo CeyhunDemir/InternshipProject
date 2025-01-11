@@ -2,7 +2,9 @@ package com.sd.stockmanagementsystem.infrastructure.adapter.out.persistence.repo
 
 import com.sd.stockmanagementsystem.application.port.output.StockRepositoryPort;
 import com.sd.stockmanagementsystem.domain.model.Stock;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,5 +29,14 @@ public interface StockRepository extends JpaRepository<Stock, Long>, StockReposi
             @Param("productName") String product_Name,
             @Param("productBarcode") String product_Barcode,
             @Param("locationName") String location_Name);
+
+    List<Stock> findByIdIn(List<Long> ids);
+
+    List<Stock> findByIdInAndLocation_IdIn(Set<Long> ids, Set<Long> locationId);
+
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select s from Stock s where s.id = :id")
+    Optional<Stock> findByIdForUpdate(@Param("id") long id);
 
 }

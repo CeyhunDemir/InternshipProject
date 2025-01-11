@@ -5,6 +5,7 @@ import com.sd.stockmanagementsystem.application.dto.core.LocationKey;
 import com.sd.stockmanagementsystem.application.dto.core.ProductKey;
 import com.sd.stockmanagementsystem.application.dto.core.StockKey;
 import com.sd.stockmanagementsystem.application.dto.request.AddMultipleTransactionsRequestDTO;
+import com.sd.stockmanagementsystem.application.dto.request.AddStockRequestDTO;
 import com.sd.stockmanagementsystem.application.dto.request.AddTransactionRequestDTO;
 import com.sd.stockmanagementsystem.application.dto.request.TransactionFilterDTO;
 import com.sd.stockmanagementsystem.application.dto.response.GetAllTransactionsResponseDTO;
@@ -128,33 +129,7 @@ public class TransactionServiceImpl implements ITransactionService {
     @Override
     @Transactional
     public void addMultipleTransactions(AddMultipleTransactionsRequestDTO addMultipleTransactionsRequestDTO) {
-        Set<AddTransactionRequestDTO> addTransactionRequestDTOS = addMultipleTransactionsRequestDTO.getTransactions();
-
-
-        /*Set<AddTransactionByProductNameRequestDTO> addTransactionByProductNameRequestDTOs = transactions.stream()
-                .filter(AddTransactionByProductNameRequestDTO.class::isInstance)
-                .map(AddTransactionByProductNameRequestDTO.class::cast)
-                .collect(Collectors.toSet());
-        Set<AddTransactionByProductNameRequestDTO> uniqueAddTransactionByProductNameRequestDTOs = addTransactionByProductNameRequestDTOs.stream()
-                .collect(Collectors.toMap(
-                        dto -> dto.getProduct_name() + "|" + dto.getTransactionType(), // Key: productName
-                        dto -> dto, // Value: the DTO object
-                        (dto1, dto2) -> { // Merge function for duplicates
-                            dto1.setQuantity(dto1.getQuantity() + dto2.getQuantity());
-                            return dto1;
-                        }
-                ))
-                .values()
-                .stream()
-                .collect(Collectors.toSet());
-*/
-
-
-        /*Set<AddTransactionByBarcodeRequestDTO> addTransactionByBarcodeRequestDTOs = transactions.stream()
-                .filter(AddTransactionByBarcodeRequestDTO.class::isInstance)
-                .map(AddTransactionByBarcodeRequestDTO.class::cast)
-                .collect(Collectors.toSet());*/
-
+        List<AddTransactionRequestDTO> addTransactionRequestDTOS = addMultipleTransactionsRequestDTO.getTransactions();
 
         // Step 1: Collect unique barcodes, product names, and locations
         Set<String> productNames = new HashSet<>();
@@ -258,13 +233,26 @@ public class TransactionServiceImpl implements ITransactionService {
                             .build();
 
                     Stock stock = stockMap.get(stockKey);
-                    if (stock == null) {
+                    if (stock == null && entry.getTransactionType() == TransactionEnumeration.TransactionType.BUY) {
+                        stock = stockService.addStock(AddStockRequestDTO.builder()
+                                .locationName(entry.getLocationName())
+                                .productName(entry.getProduct_name())
+                                .barcode(entry.getBarcode())
+                                .product(product)
+                                .location(location)
+                                .build());
+                    }
+                    if (stock == null && entry.getTransactionType() != TransactionEnumeration.TransactionType.BUY) {
                         throw new EntityNotFoundException("Stock not found for: " + stockKey);
                     }
 
                     if (entry.getTransactionType() == TransactionEnumeration.TransactionType.SELL && stock.getQuantity() < entry.getQuantity()) {
                         throw new IllegalArgumentException("Not enough stock available for " + product.getName() +
                                 " at location " + stock.getLocation().getName() + ". Available: " + stock.getQuantity() + ", Requested: " + entry.getQuantity());
+                    }
+
+                    if (entry.getTransactionType() == TransactionEnumeration.TransactionType.SELL) {
+                        entry.setQuantity(-entry.getQuantity());
                     }
 
                     Customer customer = null;
@@ -277,54 +265,30 @@ public class TransactionServiceImpl implements ITransactionService {
                     return Transaction.builder()
                             .transactionType(entry.getTransactionType())
                             .stock(stock)
-                            .totalPrice(entry.getTotalPrice())
+                            .totalPrice(Math.abs(product.getPrice() * entry.getQuantity()))
                             .quantity(entry.getQuantity())
                             .customer(customer)
                             .build();
                 })
                 .collect(Collectors.toSet());
 
-// Step 6: Save transactions
+// Step 6: Save transactions and update stock and product quantities
+        Map<Long, Double> productQuantityMap = new HashMap<>();
+        Map<Long, Double> stockQuantityMap = new HashMap<>();
+
+        transactions
+                .forEach(entry -> {
+                    if (entry.getStock() != null) {
+                        stockQuantityMap.put(entry.getStock().getId(), entry.getQuantity());
+                    }
+                    if (entry.getStock().getProduct() != null) {
+                        productQuantityMap.put(entry.getStock().getProduct().getId(), entry.getQuantity());
+                    }
+                });
+        productService.updateProductQuantityInBulk(productQuantityMap);
+        stockService.updateStockQuantityInBulk(stockQuantityMap);
         transactionRepository.saveAll(transactions);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /*for (AddTransactionRequestDTO addTransactionRequestDTO : addTransactionRequestDTOList) {
-            if (addTransactionRequestDTO instanceof AddTransactionByBarcodeRequestDTO) {
-                this.addTransactionByBarcode((AddTransactionByBarcodeRequestDTO) addTransactionRequestDTO);
-            } else if (addTransactionRequestDTO instanceof AddTransactionByProductNameRequestDTO) {
-                this.addTransactionByProductName((AddTransactionByProductNameRequestDTO) addTransactionRequestDTO);
-            }
-        }*/
 
     }
 
-
-
-    /*@Transactional
-    @Override
-    public double calculateQuantity(long id) {
-        List<Transaction> transactions = transactionRepository.findByProduct_Id(id);
-        double totalQuantity = 0;
-        for (Transaction transaction : transactions) {
-            if (transaction.getTransactionType() == TransactionEnumeration.TransactionType.SELL)
-                totalQuantity -= transaction.getQuantity();
-            else
-                totalQuantity += transaction.getQuantity();
-        }
-        return totalQuantity;
-    }*/
 }

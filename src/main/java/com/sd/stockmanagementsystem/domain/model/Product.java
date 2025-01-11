@@ -39,7 +39,7 @@ public class Product {
     @Column(name = "product_price")
     private double price;
 
-    @Column(name = "product_barcode", unique = true, nullable = false)
+    @Column(name = "product_barcode", unique = true, nullable = true)
     private String barcode;
 
     @Column(name = "product_enabled")
