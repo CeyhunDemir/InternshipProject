@@ -21,10 +21,10 @@ public class Stock {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
-    @Column(name = "stock_quantity")
-    private double quantity;
+    @Column(name = "stock_quantity", nullable = false, columnDefinition = "double precision default 0.0")
+    private double quantity = 0.0;
 }

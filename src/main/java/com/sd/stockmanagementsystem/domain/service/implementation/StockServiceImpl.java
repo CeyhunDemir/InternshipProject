@@ -208,8 +208,9 @@ public class StockServiceImpl implements IStockService {
         List<Stock> originStocks = stockRepository.findByIdIn(ids);
         Map<Long, Stock> idOriginStockMap = originStocks.stream().collect(Collectors.toMap(
                 stock -> {
-                    if (stock.getQuantity() < moveProductInStockRequestDTOSGroupedByOrigin.get(stock.getId()).getQuantity()) {
-                        throw new IllegalArgumentException("");
+                    Double moveQuantity = moveProductInStockRequestDTOSGroupedByOrigin.get(stock.getId()).getQuantity();
+                    if (stock.getQuantity() < moveQuantity) {
+                        throw new IllegalArgumentException("Stock of " + stock.getProduct().getName() + " is " + stock.getQuantity() + " but you are attempting to move " + moveQuantity);
                     } else return stock.getId();
                 },
                 stock -> stock
@@ -224,32 +225,36 @@ public class StockServiceImpl implements IStockService {
 
         //Finding and listing the destinations that does not exist yet.
         Set<Pair<Long, Long>> missingDestinations = new HashSet<>();
-        StringBuilder query = new StringBuilder("SELECT " +
-                "CASE ");
-        for (Pair<Long, Long> possibleDestination : possibleDestinations.keySet()) {
-            query.append("WHEN s.product.id = ")
-                    .append(possibleDestination.getLeft())
-                    .append(" AND s.location.id = ")
-                    .append(possibleDestination.getRight())
-                    .append(" THEN ")
-                    .append("1 "); // Return 1 when found
-        }
-        query.append(" ELSE 0 END, s.product.id, s.location.id FROM Stock s WHERE ");
-        for (Pair<Long, Long> possibleDestination : possibleDestinations.keySet()) {
-            query.append(" (s.product.id = ")
-                    .append(possibleDestination.getLeft())
-                    .append(" AND s.location.id = ")
-                    .append(possibleDestination.getRight())
-                    .append(") OR ");
-        }
-        query.delete(query.length() - 4, query.length());
+        StringBuilder query = new StringBuilder(
+                "WITH pairs AS ( " +
+                        "    SELECT CAST(product_id AS BIGINT) AS product_id, CAST(location_id AS BIGINT) AS location_id " +
+                        "    FROM (VALUES ");
 
-        List<Object[]> results = entityManager.createQuery(query.toString()).getResultList();
+        for (Pair<Long, Long> possibleDestination : possibleDestinations.keySet()) {
+            query.append("(")
+                    .append(possibleDestination.getLeft()).append(", ")
+                    .append(possibleDestination.getRight()).append("),");
+        }
+
+// Remove the trailing comma
+        query.deleteCharAt(query.length() - 1);
+
+        query.append(") AS temp(product_id, location_id) " +
+                ") " +
+                "SELECT pairs.product_id, pairs.location_id, " +
+                "       CASE WHEN EXISTS ( " +
+                "           SELECT 1 FROM Stock s " +
+                "           WHERE s.product_id = pairs.product_id AND s.location_id = pairs.location_id " +
+                "       ) THEN 1 ELSE 0 END AS exists_flag " +
+                "FROM pairs");
+
+// Execute the query
+        List<Object[]> results = entityManager.createNativeQuery(query.toString(), Object[].class).getResultList();
 
         for (Object[] result : results) {
-            Integer matchFlag = (Integer) result[0]; // This stores whether a match was found (1) or not (0)
-            Long productId = (Long) result[1]; // Product ID
-            Long locationId = (Long) result[2]; // Location ID
+            Long productId = ((Number) result[0]).longValue(); // Cast to Long
+            Long locationId = ((Number) result[1]).longValue(); // Cast to Long
+            Long matchFlag = ((Number) result[2]).longValue(); // Cast to Long
 
             // Use the pair as desired
             Pair<Long, Long> searchedPair = Pair.of(productId, locationId);
@@ -283,16 +288,42 @@ public class StockServiceImpl implements IStockService {
                 })
                 .collect(Collectors.toList());
         stockRepository.saveAll(newStocks);
+        entityManager.flush();
+        entityManager.clear();
 
         //Selecting all the origin and destination stock entries and LOCKING them.
-        entityManager.createQuery(
+        List<Stock> lockedStocks = entityManager.createQuery(
                         "SELECT s FROM Stock s WHERE s.id IN (:ids) " +
                                 "OR (s.product.id IN :productIds AND s.location.id IN (:locationIds))",
                         Stock.class)
                 .setParameter("ids", ids)
                 .setParameter("locationIds", destinationIds)
                 .setParameter("productIds", possibleDestinations.keySet().stream().map(Pair::getLeft).collect(Collectors.toSet()))
-                .setLockMode(LockModeType.PESSIMISTIC_WRITE); // Lock rows for update
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .getResultList(); // Lock rows for update
+
+        entityManager.flush();
+        entityManager.clear();
+
+
+        //Updating origin stocks
+
+        StringBuilder updateQuery2 = new StringBuilder("UPDATE Stock s SET s.quantity = CASE ");
+
+        for (Stock stock : originStocks) {
+            updateQuery2.append("WHEN s.id = ")
+                    .append(stock.getId())
+                    .append(" THEN s.quantity-")
+                    .append(moveProductRequests.get(stock.getId()).getQuantity())
+                    .append(" ");
+        }
+        updateQuery2.append("END WHERE s.id IN (:ids)");
+
+        entityManager.createQuery(updateQuery2.toString())
+                .setParameter("ids", ids)
+                .executeUpdate();
+        entityManager.flush();
+        entityManager.clear();
 
 
         //Updating destination stocks
@@ -303,32 +334,25 @@ public class StockServiceImpl implements IStockService {
                     .append(destination.getLeft())
                     .append(" AND s.location.id = ")
                     .append(destination.getRight())
-                    .append(" THEN s.quantity + ")
+                    .append(" THEN s.quantity+")
                     .append(possibleDestinations.get(destination).getQuantity())
                     .append(" ");
         }
-        updateQuery.append("END WHERE s.product.id IN (:productIds) AND s.location.id IN (:locationIds)");
+        updateQuery.append("END WHERE ");
+        for (Pair<Long, Long> destination : possibleDestinations.keySet()) {
+            updateQuery.append("(s.product.id = ")
+                    .append(destination.getLeft())
+                    .append(" AND s.location.id = ")
+                    .append(destination.getRight())
+                    .append(") OR ");
+        }
+        updateQuery.delete(updateQuery.length() - 4, updateQuery.length());
 
         entityManager.createQuery(updateQuery.toString())
-                .setParameter("productIds", possibleDestinations.keySet().stream().map(Pair::getLeft).collect(Collectors.toSet()))
-                .setParameter("locationIds", possibleDestinations.keySet().stream().map(Pair::getRight).collect(Collectors.toSet()))
+/*                .setParameter("productIds", possibleDestinations.keySet().stream().map(Pair::getLeft).collect(Collectors.toSet()))
+                .setParameter("locationIds", possibleDestinations.keySet().stream().map(Pair::getRight).collect(Collectors.toSet()))*/
                 .executeUpdate();
-
-        //Updating origin stocks
-
-        StringBuilder updateQuery2 = new StringBuilder("Update Stock s SET s.quantity = CASE");
-
-        for (Stock stock : originStocks) {
-            updateQuery2.append("WHEN s.id = ")
-                    .append(stock.getId())
-                    .append(" THEN s.quantity - ")
-                    .append(moveProductRequests.get(stock.getId()))
-                    .append(" ");
-        }
-        updateQuery2.append("END WHERE s.id IN (:ids)");
-
-        entityManager.createQuery(updateQuery2.toString())
-                .setParameter("ids", ids)
-                .executeUpdate();
+        entityManager.flush();
+        entityManager.clear();
     }
 }
